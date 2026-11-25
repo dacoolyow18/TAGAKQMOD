@@ -19,3 +19,12 @@ Work on separate copies of each runner because both write `qmodsim_results.json`
 The six deterministic topics agreed on the shared reported quantities. In the stored result, annual loss was ₱10,749.43 and VaR₉₅ ₱21,296.14. The JavaScript rerun returned ₱10,751.93 and ₱21,387.13, respectively. The Python run returned ₱10,723.86 and ₱21,378.83. The largest mean difference from the stored result was ₱25.57 (0.24%). This comparison measures run-to-run agreement, not empirical validation.
 
 [Archived result](qmodsim_results.json) · [JavaScript rerun](evidence/node.json) · [Python rerun](evidence/python.json) · [JavaScript formulas](run_qmodsim.js) · [Python formulas](qmodsim_suite.py)
+
+
+### Current deployed lab verification
+
+Checked on 25 November 2026. [Live TAGAKQMOD](https://tagakqmod.onrender.com) serves the QMODSIM lab asset. Its JavaScript matches repository main at `1e4c0502e3348806dc62a500509ab77f9f57abd8`. Downloaded assets executed in an isolated Chromium page with all seven chart canvases initialized, including the 100,000-iteration simulation. This confirms that the deployed model code renders with the deployed HTML and chart library. Authenticated production telemetry was not tested. An anonymous telemetry request correctly returned HTTP 401.
+
+The interactive lifecycle defaults use a 5% queued void rate, 3% brewing void rate and 1.5% refund parameter. They construct transition blocks differently from the fixed standalone scenario above. The interactive run showed 3.14 expected queued steps and terminal probabilities of 88.04% completed, 9.73% voided and 2.23% refunded. The standalone scenario retains 3.1333 expected queued steps. The distinction follows the explicit input matrices; it is not evidence of equivalent scenario outputs.
+
+The downloaded interactive Monte Carlo code returned ALE PHP 10,739.64 and VaR95 PHP 21,345.99 in this unseeded smoke run. These are additional scenario observations. The archived result and both earlier evidence JSON files were preserved byte-for-byte. See the [audit follow-up](../SECURITY_AND_SKILL_AUDIT.md) for the scope and operational limitations.

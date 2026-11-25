@@ -2,7 +2,9 @@
 
 Tagak Café connects customer orders, branch registers and administrative controls to one PostgreSQL database. The QMODSIM lab uses order transitions and branch telemetry to explore staffing, service times, cash reconciliation and offline resilience.
 
-**Live staging site:** [Open Tagak Café](https://tagak-staging.onrender.com). On 25 November 2026 the public café and unified login responded. The deployed POS did not include the submitted QMODSIM script. Use the local application to assess the full submission.
+**Live website:** [Open TAGAKQMOD](https://tagakqmod.onrender.com), hosted on Render with Neon PostgreSQL, as reported by the project owner. Anonymous verification on 25 November 2026 confirmed the storefront, login, deployed QMODSIM assets and database readiness. The deployed POS and QMODSIM scripts match the submitted source. All seven model renderers executed successfully using those assets in an isolated Chromium page. Authenticated production telemetry and transaction workflows were outside this check.
+
+The owner reports successful manual tests of online ordering, POS, offline emergency mode and Xendit QR payment simulation. Read-only verification confirmed that QR checkout and simulation are enabled.
 
 ## System and data flow
 
@@ -22,4 +24,4 @@ The browser apps use HTML, CSS and JavaScript. Express serves the apps and JSON 
 
 See the [installation and deployment guide](tagak-coffee/README.md), [role and permission reference](tagak-coffee/docs/RBAC.md), [mathematical verification](qmodsim/VERIFICATION.md), [security and skill audit](SECURITY_AND_SKILL_AUDIT.md) and [submission checklist](FINAL_SUBMISSION.md).
 
-The shared-core reference is `deploy/render-neon` at `e0e8eca`. This submission includes PBLQMOD-specific additions. Its source snapshot and the Render deployment have distinct identities.
+The shared-core reference is `deploy/render-neon` at `e0e8eca`. This submission includes PBLQMOD-specific additions. The current repository is [dacoolyow18/TAGAKQMOD](https://github.com/dacoolyow18/TAGAKQMOD), branch `main`. Deployed asset parity confirms the inspected scripts. The hosting service does not expose a deployment commit through these public checks.

@@ -1,5 +1,7 @@
 # POS emergency cash release
 
+Current submission context, verified 25 November 2026, is [dacoolyow18/TAGAKQMOD](https://github.com/dacoolyow18/TAGAKQMOD), branch `main`, deployed at https://tagakqmod.onrender.com. The owner reports a successful offline emergency-mode test. The earlier staging branch and service references below are preserved as historical release instructions. This documentation update uses a `[skip render]` commit and does not perform the release procedure.
+
 ## Before manual deployment
 
 1. In Render, verify that tagak-staging is linked to TAGAKCAFE/TAGAKSYSTEM on `deploy/render-neon` and record the live deploy's Git SHA. The staging parent used for this integration is `8d7d5280819a4c994ec428d807d69abd95508be8`. Compare that SHA with the candidate's base using `git merge-base --is-ancestor LIVE_SHA HEAD`. Review any intervening staging commits. In the service's Settings, set Auto-Deploy to Off before publishing changes to a linked branch.
