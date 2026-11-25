@@ -1,0 +1,1321 @@
+<!--
+  File: index.html
+  Path: pos-app/index.html
+  Description: Main entry point for the Tagak Coffee Vendor POS App.
+               Structural HTML only — no inline JS or CSS logic.
+               Loads compiled Tailwind CSS, Google Fonts, Chart.js, custom stylesheet,
+               and all application scripts (data → app → orders → dashboard → inventory).
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tagak POS</title>
+
+  <link rel="stylesheet" href="/vendor/tailwind.css">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400;1,500;1,600;1,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Chart.js -->
+  <script src="/vendor/chart.umd.min.js"></script>
+
+  <!-- Cropper.js -->
+  <link rel="stylesheet" href="/vendor/cropper.min.css">
+  <script src="/vendor/cropper.min.js"></script>
+
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="../qr-checkout.css">
+</head>
+
+<body>
+
+  <!-- ============================================================
+       DASHBOARD LAYOUT
+       ============================================================ -->
+  <div id="app-layout" class="layout hidden">
+
+    <!-- ── SIDEBAR OVERLAY (mobile) ── -->
+    <div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+    <!-- ── DEEP FOREST SLIM NAVIGATION RAIL ── -->
+    <aside class="sidebar" id="app-sidebar" aria-label="Primary navigation">
+      <!-- Brand -->
+      <div class="sidebar-brand">
+        <img src="../admin-app/assets/tagak-logo-admin-v2.png" alt="Tagak Coffee logo" class="sidebar-logo-img">
+        <div class="sidebar-brand-text">
+          <span class="sidebar-brand-title">Tagak POS</span>
+          <span class="sidebar-brand-sub">Counter System</span>
+        </div>
+      </div>
+
+      <!-- Navigation -->
+      <nav class="sidebar-nav" aria-label="POS sections">
+        <button class="sidebar-item active" data-view="register" type="button" title="Register">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9l1.2-4.2A1 1 0 015.16 4h13.68a1 1 0 01.96.8L21 9M4 9v10a1 1 0 001 1h14a1 1 0 001-1V9M4 9h16M9 13h6"/></svg>
+          <span class="sidebar-item-label">Register</span>
+        </button>
+        <button class="sidebar-item" data-view="orders" type="button" title="Orders">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+          <span class="sidebar-item-label">Orders</span>
+        </button>
+        <button class="sidebar-item" data-view="analytics" type="button" title="Analytics">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+          <span class="sidebar-item-label">Analytics</span>
+        </button>
+        <button class="sidebar-item" data-view="qmodsim" type="button" title="QMODSIM Lab">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+          <span class="sidebar-item-label">QMODSIM</span>
+        </button>
+        <button class="sidebar-item" data-view="menu-recipes" type="button" title="Menu &amp; Recipes">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+          <span class="sidebar-item-label">Menu &amp; Recipes</span>
+        </button>
+        <button class="sidebar-item" data-view="add-ons" type="button" title="Add-ons">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14M5 12h14"/></svg>
+          <span class="sidebar-item-label">Add-ons</span>
+        </button>
+        <button class="sidebar-item" data-view="supplies" type="button" title="Supplies">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+          <span class="sidebar-item-label">Supplies</span>
+        </button>
+        <button class="sidebar-item" data-view="tools" type="button" title="Tools">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          <span class="sidebar-item-label">Tools</span>
+        </button>
+        <button class="sidebar-item" data-view="offline" type="button" title="Offline Mode">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 16h4l3-9 4 12 3-8 2 5h2"/></svg>
+          <span class="sidebar-item-label">Offline Mode</span>
+        </button>
+      </nav>
+
+      <!-- User info at bottom (desktop rail + mobile drawer) -->
+      <div class="sidebar-footer">
+        <div class="sidebar-user-chip">
+          <div class="sidebar-avatar" id="sidebar-avatar"></div>
+          <div class="sidebar-user-meta">
+            <p class="sidebar-username" id="sidebar-username"></p>
+            <p class="sidebar-role" id="sidebar-role"></p>
+          </div>
+        </div>
+        <!-- Mobile user mirror hooks -->
+        <div class="hidden">
+          <span id="sidebar-avatar-mobile"></span>
+          <span id="sidebar-username-mobile"></span>
+          <span id="sidebar-role-mobile"></span>
+        </div>
+        <button id="btn-logout" type="button" class="sidebar-logout" aria-label="Log out" title="Log out">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+          <span>Log out</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- ── MAIN AREA ── -->
+    <div class="main-area">
+
+      <!-- Global Header -->
+      <header class="header">
+        <div class="header-left flex-1 min-w-0">
+          <!-- Mobile hamburger -->
+          <button id="btn-hamburger" class="hamburger-btn" type="button" aria-label="Open navigation menu">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+          </button>
+          <span class="header-title truncate" id="view-title">Register</span>
+        </div>
+        <div class="header-right flex-shrink-0">
+          <span class="header-branch-badge hidden" id="header-branch" aria-label="Active branch"></span>
+          <span class="header-clock hidden sm:inline" id="header-clock"></span>
+
+          <!-- Store Toggle -->
+          <div class="header-store-pill">
+            <span class="header-store-dot"></span>
+            <span class="header-store-label" id="store-label">Open</span>
+            <button id="btn-store-toggle" class="toggle-track open" type="button" aria-label="Toggle store status">
+              <div class="toggle-thumb"></div>
+            </button>
+          </div>
+
+          <!-- Offline RBD Queue Status & Sync Control (Module 12) -->
+          <div id="legacy-receipts" hidden><span id="offline-queue-count"></span> <button id="btn-sync-offline-queue" type="button">Reconcile legacy cash receipts</button><span id="legacy-result" role="status"></span></div>
+
+          <!-- Cash Drawer -->
+          <button id="btn-cash-drawer" class="btn btn-secondary btn-sm" type="button" title="Cash Drawer (Pay In / Pay Out)">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+            <span class="hidden sm:inline">Cash Drawer</span>
+          </button>
+
+          <!-- Cashier name -->
+          <span class="header-cashier-badge hidden sm:inline" id="header-cashier"></span>
+        </div>
+      </header>
+
+      <!-- Scrollable Content Area -->
+      <main class="content">
+        <section id="view-offline" class="view-section hidden" aria-labelledby="view-title">
+          <div class="offline-details">
+            <section class="surface-card p-4 sm:p-5">
+              <h2 class="section-heading mb-2">Connection &amp; shift</h2>
+              <div id="offline-status" aria-live="polite">
+                <strong id="offline-connection" class="badge badge-queued">Checking connection</strong>
+                <p id="offline-instruction" class="mt-2"></p>
+              </div>
+              <p id="offline-shift" class="text-sm mt-2"></p>
+              <details class="mt-3 text-sm">
+                <summary>Register details</summary>
+                <p id="offline-device" class="mt-2"></p>
+              </details>
+              <div class="flex flex-wrap gap-2 mt-4">
+                <button id="offline-retry" type="button" class="btn btn-primary">Check connection and retry</button>
+                <button id="offline-manager" type="button" class="btn btn-secondary" hidden>Review branch recovery</button>
+              </div>
+              <div id="offline-review"></div>
+            </section>
+            <section class="surface-card p-4 sm:p-5">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <h2 class="section-heading">Cash receipts</h2>
+                <span id="offline-count" class="badge badge-queued" aria-live="polite">Checking receipts</span>
+              </div>
+              <p id="offline-progress" class="text-sm mt-2"></p>
+              <ul aria-label="Local cash receipts" id="offline-history"></ul>
+            </section>
+            <details class="surface-card p-4 sm:p-5">
+              <summary class="section-heading">Staff guide</summary>
+              <ol class="list-decimal pl-5 mt-3 space-y-2 text-sm">
+                <li>When offline cash is ready, open Register and take walk-in cash orders.</li>
+                <li>If your shift has ended, reconnect and sign in again before taking cash.</li>
+                <li>Keep this register open when the connection returns. Receipts send automatically.</li>
+              </ol>
+            </details>
+          </div>
+        </section>
+
+        <!-- ═══ VIEW: REGISTER / NEW SALE (Video 00:08–00:23) ═══ -->
+        <div id="view-register" class="view-section reg-view">
+
+          <!-- ── Product grid (main) ── -->
+          <div class="reg-main">
+            <div class="reg-toolbar">
+              <!-- Top search row (matches reference video top search bar) -->
+              <div class="reg-toolbar-top">
+                <div class="reg-search">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z"/></svg>
+                  <input type="text" id="reg-search" placeholder="Search items by name, code, or category…" autocomplete="off" aria-label="Search the menu">
+                </div>
+              </div>
+
+              <!-- Horizontal category pills row (matches reference video category strip) -->
+              <div class="reg-chips" id="reg-chips" role="tablist" aria-label="Menu categories">
+                <button type="button" class="reg-chip active" data-cat="all">All Items <span class="reg-chip-n"></span></button>
+                <button type="button" class="reg-chip" data-cat="Drinks">Drinks <span class="reg-chip-n"></span></button>
+                <button type="button" class="reg-chip" data-cat="Pastries">Pastries <span class="reg-chip-n"></span></button>
+              </div>
+            </div>
+
+            <div class="reg-grid" id="reg-grid"></div>
+          </div>
+
+          <!-- ── Order summary / cart (persistent right panel, Video 00:20–00:23) ── -->
+          <aside class="reg-cart" id="reg-cart" aria-label="Order summary">
+            <!-- Order Mode Selector Tiles (Dine-in / Takeout — Video 00:21) -->
+            <div class="reg-order-modes" id="reg-order-modes" role="tablist" aria-label="Order service type">
+              <button type="button" class="reg-mode-btn active" data-order-mode="dine-in">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3v7a4 4 0 004 4v7m0-18v7m4-7v7M17 3v18m0-18a4 4 0 014 4v4h-4"/></svg>
+                <span>Dine-in</span>
+              </button>
+              <button type="button" class="reg-mode-btn" data-order-mode="takeout">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                <span>Takeout</span>
+              </button>
+            </div>
+
+            <header class="reg-cart-head">
+              <div class="reg-cart-head-left">
+                <div class="flex items-center gap-2">
+                  <span class="reg-cart-title">Current Order</span>
+                  <span class="reg-cart-mode-tag" id="reg-order-mode-tag">DINE-IN</span>
+                </div>
+                <p class="reg-cart-id" id="reg-ticket-id">#—</p>
+              </div>
+              <div class="reg-cart-head-right">
+                <span class="reg-cart-count" id="reg-cart-count">0 items</span>
+                <button type="button" class="reg-clear" id="reg-clear" title="Clear current order">Clear</button>
+              </div>
+            </header>
+
+            <div class="reg-cart-customer">
+              <label for="reg-customer-name" class="field-label">Customer Nickname</label>
+              <input type="text" id="reg-customer-name" class="field-input reg-customer-input" maxlength="30" placeholder="e.g. Sam" autocomplete="off">
+            </div>
+
+            <div class="reg-cart-lines" id="reg-cart-lines"></div>
+
+            <footer class="reg-cart-foot">
+              <div class="reg-sum-row"><span>Subtotal</span><span id="reg-subtotal">&#8369;0.00</span></div>
+              <div class="reg-sum-row"><span>VAT (12%)</span><span id="reg-vat">&#8369;0.00</span></div>
+              <div class="reg-total-row"><span>Total</span><span id="reg-total">&#8369;0.00</span></div>
+              <div class="flex gap-2 mb-2">
+                <button type="button" class="btn btn-secondary btn-sm w-full" id="btn-hold-order" disabled title="Park cart in DTMC State S0 (Cart/Held)">
+                  Hold Order (S0)
+                </button>
+              </div>
+              <button type="button" class="reg-pay" id="reg-pay" disabled>
+                <span class="reg-pay-left">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                  <span>Checkout</span>
+                </span>
+                <span id="reg-pay-amount">&#8369;0.00</span>
+              </button>
+            </footer>
+          </aside>
+
+        </div>
+
+        <!-- ═══ VIEW: ORDERS ═══ -->
+        <div id="view-orders" class="view-section hidden h-full flex flex-col">
+          <div class="view-header-bar mb-3">
+            <div class="flex items-center gap-2.5">
+              <h2 class="view-heading">Today's Orders</h2>
+              <span id="order-count-badge" class="badge badge-queued"></span>
+            </div>
+          </div>
+          <div class="kanban flex-1 min-h-0" id="kanban-board"></div>
+          <div class="kanban-scroll-hints" id="kanban-scroll-hints">
+            <span class="scroll-dot active" data-col="0"></span>
+            <span class="scroll-dot" data-col="1"></span>
+            <span class="scroll-dot" data-col="2"></span>
+            <span class="scroll-dot" data-col="3"></span>
+            <span class="scroll-dot" data-col="4"></span>
+            <span class="scroll-dot" data-col="5"></span>
+          </div>
+        </div>
+
+        <!-- ═══ VIEW: ANALYTICS ═══ -->
+        <div id="view-analytics" class="view-section hidden">
+          <!-- Control bar -->
+          <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+            <div>
+              <h2 class="view-heading">Analytics</h2>
+              <p class="view-subheading">Track revenue, cost of goods sold, expenses, and item-level margins.</p>
+            </div>
+            <div class="analytics-toolbar">
+              <div class="analytics-preset-group" role="group" aria-label="Date range presets">
+                <button class="btn btn-sm chart-filter" data-preset="today" type="button">Today</button>
+                <button class="btn btn-sm chart-filter" data-preset="daily" type="button">Daily</button>
+                <button class="btn btn-sm chart-filter" data-preset="monthly" type="button">Monthly</button>
+                <button class="btn btn-sm chart-filter" data-preset="yearly" type="button">Yearly</button>
+              </div>
+              <span class="hidden sm:inline h-6 w-px bg-slate-200 self-center"></span>
+              <div class="flex items-end gap-2 flex-wrap">
+                <div>
+                  <label for="report-start" class="field-label">Start</label>
+                  <input type="date" id="report-start" class="field-input field-input-sm tabular-nums">
+                </div>
+                <div>
+                  <label for="report-end" class="field-label">End</label>
+                  <input type="date" id="report-end" class="field-input field-input-sm tabular-nums">
+                </div>
+                <button id="btn-report-print" class="btn btn-secondary btn-sm" type="button">Download PDF</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Top: At a Glance summary cards -->
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-4">
+            <div class="kpi-card">
+              <span class="kpi-label">Revenue</span>
+              <p id="report-summary-revenue" class="kpi-value text-text-dark tabular-nums">&#8369;0.00</p>
+            </div>
+            <div class="kpi-card">
+              <span class="kpi-label">Pay-Ins</span>
+              <p id="report-summary-pay-ins" class="kpi-value text-crema tabular-nums">&#8369;0.00</p>
+            </div>
+            <div class="kpi-card">
+              <span class="kpi-label">COGS</span>
+              <p id="report-summary-cogs" class="kpi-value text-slate-700 tabular-nums">&#8369;0.00</p>
+            </div>
+            <div class="kpi-card">
+              <span class="kpi-label">Cash Expenses</span>
+              <p id="report-summary-cash-expenses" class="kpi-value text-espresso tabular-nums">&#8369;0.00</p>
+            </div>
+            <div class="kpi-card">
+              <span class="kpi-label">Net Profit</span>
+              <p id="report-summary-profit" class="kpi-value text-crema tabular-nums">&#8369;0.00</p>
+            </div>
+            <div class="kpi-card">
+              <span class="kpi-label">Orders</span>
+              <p id="report-summary-orders" class="kpi-value text-text-dark tabular-nums">0</p>
+            </div>
+          </div>
+
+          <!-- Middle: Trends charts -->
+          <div class="chart-grid mb-4">
+            <div class="chart-card">
+              <h3 class="section-heading mb-3">Sales Revenue</h3>
+              <div style="height:14rem"><canvas id="chart-sales"></canvas></div>
+            </div>
+            <div class="chart-card">
+              <h3 class="section-heading mb-3">Orders Count</h3>
+              <div style="height:14rem"><canvas id="chart-orders"></canvas></div>
+            </div>
+          </div>
+
+          <!-- Bottom: Deep Dive (collapsible) -->
+          <div class="surface-card overflow-hidden">
+            <button id="btn-toggle-breakdown" class="breakdown-toggle-btn" type="button" aria-expanded="false">
+              <span class="flex items-center gap-2.5">
+                <span class="section-heading">Detailed Breakdown</span>
+                <span id="report-range-label" class="text-xs font-medium text-slate-600 normal-case"></span>
+              </span>
+              <svg id="breakdown-chevron" class="w-4 h-4 text-slate-600 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </button>
+            <div id="breakdown-body" class="hidden">
+              <div class="overflow-x-auto">
+                <table class="data-table" id="report-table">
+                  <thead>
+                    <tr>
+                      <th>Item</th>
+                      <th>Category</th>
+                      <th>Qty Sold</th>
+                      <th>Revenue</th>
+                      <th>COGS</th>
+                      <th>Net Profit</th>
+                    </tr>
+                  </thead>
+                  <tbody id="report-tbody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══ VIEW: QMODSIM MODELING & SIMULATION LAB (7 MODULES) ═══ -->
+        <div id="view-qmodsim" class="view-section hidden space-y-5">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 class="view-heading">QMODSIM Modeling &amp; Simulation Lab</h2>
+              <p class="view-subheading">Quantitative Modeling &amp; Simulation across Tagak Café arrivals, M/M/c/K queues, DTMC lifecycles, FAIR Monte Carlo risk, Game Theory audits, PIN entropy, and RBD offline resilience.</p>
+              <p id="qmod-live-db-summary" class="text-xs font-semibold text-crema mt-1">Live DB Telemetry: Loading…</p>
+            </div>
+            <div class="flex items-center gap-2 flex-wrap">
+              <button id="btn-qmod-recalc-all" class="btn btn-primary btn-sm" type="button">Recalculate All 7 Models</button>
+            </div>
+          </div>
+
+          <!-- 1. Stochastic Arrival Processes & Break-Hour Order Surges -->
+          <section class="surface-card p-4 sm:p-5 space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-3">
+              <div>
+                <span class="text-[11px] font-bold uppercase tracking-wider text-roast">Topic 1 • QMODSIM Modules 1 &amp; 3</span>
+                <h3 class="font-display text-base font-semibold text-text-dark">1. Stochastic Arrival Processes (NHPP) &amp; Break-Hour Order Surges</h3>
+              </div>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                <label class="field-label mb-0">Baseline λ_base (/hr)
+                  <input id="qmod-nhpp-base" type="number" value="8" min="1" step="1" class="field-input field-input-sm qmod-input w-20 tabular-nums">
+                </label>
+                <label class="field-label mb-0">10 AM Surge A₁
+                  <input id="qmod-nhpp-a1" type="number" value="22" min="0" step="1" class="field-input field-input-sm qmod-input w-20 tabular-nums">
+                </label>
+                <label class="field-label mb-0">12 PM Surge A₂
+                  <input id="qmod-nhpp-a2" type="number" value="28" min="0" step="1" class="field-input field-input-sm qmod-input w-20 tabular-nums">
+                </label>
+                <label class="field-label mb-0">3 PM Surge A₃
+                  <input id="qmod-nhpp-a3" type="number" value="20" min="0" step="1" class="field-input field-input-sm qmod-input w-20 tabular-nums">
+                </label>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+              <div class="kpi-card"><span class="kpi-label">Peak Rush Intensity λ(t)</span><p id="qmod-t1-peak" class="kpi-value text-text-dark tabular-nums">—</p></div>
+              <div class="kpi-card"><span class="kpi-label">Baseline Mean Inter-Arrival</span><p id="qmod-t1-interarrival" class="kpi-value text-crema tabular-nums">—</p></div>
+              <div class="kpi-card"><span class="kpi-label">Gamma Prep Mean</span><p id="qmod-t1-gamma-mean" class="kpi-value text-slate-700 tabular-nums">—</p></div>
+              <div class="kpi-card"><span class="kpi-label">Lognormal Prep Mean</span><p id="qmod-t1-log-mean" class="kpi-value text-espresso tabular-nums">—</p></div>
+            </div>
+            <div class="chart-grid">
+              <div class="chart-card">
+                <h4 class="section-heading mb-2">Gaussian-Modulated NHPP Arrival Rate λ(t) (7 AM – 7 PM)</h4>
+                <div style="height:14rem"><canvas id="chart-qmod-nhpp"></canvas></div>
+              </div>
+              <div class="chart-card">
+                <h4 class="section-heading mb-2">Barista Prep Time PDF: Gamma (Simple) vs. Lognormal (Blended)</h4>
+                <div style="height:14rem"><canvas id="chart-qmod-prep"></canvas></div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 2. Queueing Theory & Multi-Channel Counter Sizing (M/M/c/K) -->
+          <section class="surface-card p-4 sm:p-5 space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-3">
+              <div>
+                <span class="text-[11px] font-bold uppercase tracking-wider text-roast">Topic 2 • QMODSIM Module 6</span>
+                <h3 class="font-display text-base font-semibold text-text-dark">2. Queueing Theory (M/M/c/K) &amp; Multi-Channel Counter Sizing</h3>
+                <p id="qmod-t2-split-note" class="text-xs text-slate-600 mt-0.5"></p>
+              </div>
+              <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs">
+                <label class="field-label mb-0">Arrival λ (/hr)
+                  <input id="qmod-mmck-lambda" type="number" value="28" min="1" step="1" class="field-input field-input-sm qmod-input w-20 tabular-nums">
+                </label>
+                <label class="field-label mb-0">Service μ (/hr)
+                  <input id="qmod-mmck-mu" type="number" value="14" min="1" step="1" class="field-input field-input-sm qmod-input w-20 tabular-nums">
+                </label>
+                <label class="field-label mb-0">Baristas (c)
+                  <input id="qmod-mmck-c" type="number" value="2" min="1" max="8" step="1" class="field-input field-input-sm qmod-input w-16 tabular-nums">
+                </label>
+                <label class="field-label mb-0">Capacity (K)
+                  <input id="qmod-mmck-k" type="number" value="10" min="2" max="40" step="1" class="field-input field-input-sm qmod-input w-16 tabular-nums">
+                </label>
+                <label class="field-label mb-0">Mobile QR %
+                  <input id="qmod-mmck-split" type="number" value="40" min="0" max="100" step="5" class="field-input field-input-sm qmod-input w-16 tabular-nums">
+                </label>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+              <div class="kpi-card"><span class="kpi-label">Station Utilization (ρ = λ/cμ)</span><p id="qmod-t2-rho" class="kpi-value text-text-dark tabular-nums">—</p></div>
+              <div class="kpi-card"><span class="kpi-label">Idle State Prob (P₀)</span><p id="qmod-t2-p0" class="kpi-value text-crema tabular-nums">—</p></div>
+              <div class="kpi-card"><span class="kpi-label">Balking / Drop Prob (P_drop = P_K)</span><p id="qmod-t2-pdrop" class="kpi-value text-espresso tabular-nums">—</p></div>
+              <div class="kpi-card"><span class="kpi-label">Little's Law Latency (W = L/λ_eff)</span><p id="qmod-t2-littles-w" class="kpi-value text-text-dark tabular-nums">—</p></div>
+            </div>
+            <div class="chart-card">
+              <h4 class="section-heading mb-2">M/M/c/K Sensitivity: Balking Probability P_K (%) &amp; Turnaround Latency W (mins) vs. Active Baristas (c)</h4>
+              <div style="height:13rem"><canvas id="chart-qmod-mmck"></canvas></div>
+            </div>
+          </section>
+
+          <!-- 3. Discrete-Time Markov Chains (DTMC) & Order Lifecycle Dynamics -->
+          <section class="surface-card p-4 sm:p-5 space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-3">
+              <div>
+                <span class="text-[11px] font-bold uppercase tracking-wider text-roast">Topic 3 • QMODSIM Module 5</span>
+                <h3 class="font-display text-base font-semibold text-text-dark">3. Discrete-Time Markov Chains (DTMC) &amp; Order Lifecycle Dynamics</h3>
+                <p class="text-xs text-slate-600">State Space: S₀ Cart/Held, S₁ Queued, S₂ Brewing, S₃ Ready → Absorbing: S₄ Completed, S₅ Voided, S₆ Refunded</p>
+              </div>
+              <div class="grid grid-cols-3 gap-2 text-xs">
+                <label class="field-label mb-0">Queue Void %
+                  <input id="qmod-dtmc-void-rate" type="number" value="5" min="0" max="40" step="0.5" class="field-input field-input-sm qmod-input w-20 tabular-nums">
+                </label>
+                <label class="field-label mb-0">Brew Void %
+                  <input id="qmod-dtmc-brew-void" type="number" value="3" min="0" max="40" step="0.5" class="field-input field-input-sm qmod-input w-20 tabular-nums">
+                </label>
+                <label class="field-label mb-0">Refund %
+                  <input id="qmod-dtmc-refund-rate" type="number" value="1.5" min="0" max="20" step="0.5" class="field-input field-input-sm qmod-input w-20 tabular-nums">
+                </label>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+              <div class="kpi-card"><span class="kpi-label">Expected Active Steps (from S₁)</span><p id="qmod-t3-steps" class="kpi-value text-text-dark tabular-nums">—</p></div>
+              <div class="kpi-card"><span class="kpi-label">Absorption to S₄ (Completed)</span><p id="qmod-t3-complete-prob" class="kpi-value text-crema tabular-nums">—</p></div>
+              <div class="kpi-card"><span class="kpi-label">Absorption to S₅ (Voided)</span><p id="qmod-t3-void-prob" class="kpi-value text-espresso tabular-nums">—</p></div>
+              <div class="kpi-card"><span class="kpi-label">Absorption to S₆ (Refunded)</span><p id="qmod-t3-refund-prob" class="kpi-value text-roast tabular-nums">—</p></div>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <div class="overflow-x-auto border border-slate-200 rounded-lg">
+                <table class="data-table text-xs">
+                  <thead>
+                    <tr>
+                      <th>Transient State</th>
+                      <th>Fundamental Row N = (I−Q)⁻¹</th>
+                      <th>Total Steps</th>
+                      <th>B → S₄ Complete</th>
+                      <th>B → S₅ Void</th>
+                      <th>B → S₆ Refund</th>
+                    </tr>
+                  </thead>
+                  <tbody id="qmod-dtmc-tbody"></tbody>
+                </table>
+              </div>
+              <div class="chart-card">
+                <h4 class="section-heading mb-2">Absorption Probabilities B = N·R by Starting State</h4>
+                <div style="height:12rem"><canvas id="chart-qmod-dtmc"></canvas></div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 4. FAIR Risk Framework & Monte Carlo Simulation -->
+          <section class="surface-card p-4 sm:p-5 space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-3">
+              <div>
+                <span class="text-[11px] font-bold uppercase tracking-wider text-roast">Topic 4 • QMODSIM Module 4</span>
+                <h3 class="font-display text-base font-semibold text-text-dark">4. FAIR Risk Framework &amp; Monte Carlo Simulation (Cash Shrinkage &amp; Offline Fraud)</h3>
+                <p class="text-xs text-slate-600">TEF ~ Beta-PERT(a=2, m=12, b=45) • PLM ~ Lognormal(μ=6.2, σ=0.8) PHP • 100,000 Iterations</p>
+              </div>
+              <div class="flex flex-wrap items-end gap-2 text-xs">
+                <label class="field-label mb-0">Iterations
+                  <input id="qmod-fair-iters" type="number" value="100000" min="1000" max="200000" step="10000" class="field-input field-input-sm w-28 tabular-nums">
+                </label>
+                <label class="field-label mb-0">Control Cost C (₱)
+                  <input id="qmod-fair-control-cost" type="number" value="3500" min="100" step="100" class="field-input field-input-sm w-24 tabular-nums">
+                </label>
+                <label class="field-label mb-0">Mitigation %
+                  <input id="qmod-fair-mitigation" type="number" value="78" min="10" max="99" step="1" class="field-input field-input-sm w-16 tabular-nums">
+                </label>
+                <input id="qmod-fair-tef-a" type="hidden" value="2">
+                <input id="qmod-fair-tef-m" type="hidden" value="12">
+                <input id="qmod-fair-tef-b" type="hidden" value="45">
+                <input id="qmod-fair-plm-mu" type="hidden" value="6.2">
+                <input id="qmod-fair-plm-sigma" type="hidden" value="0.8">
+                <button id="btn-qmod-run-mc" class="btn btn-primary btn-sm" type="button">Run 100k Monte Carlo</button>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+              <div class="kpi-card"><span class="kpi-label">Baseline ALE (Unmitigated)</span><p id="qmod-t4-ale-base" class="kpi-value text-espresso tabular-nums">—</p></div>
+              <div class="kpi-card"><span class="kpi-label">95th Percentile VaR₉₅%</span><p id="qmod-t4-var95" class="kpi-value text-text-dark tabular-nums">—</p></div>
+              <div class="kpi-card"><span class="kpi-label">Mitigated ALE (Signed + Blind Close)</span><p id="qmod-t4-ale-mit" class="kpi-value text-crema tabular-nums">—</p></div>
+              <div class="kpi-card"><span class="kpi-label">Return on Security Investment (ROSI)</span><p id="qmod-t4-rosi" class="kpi-value text-crema tabular-nums">—</p></div>
+            </div>
+            <div class="chart-card">
+              <h4 class="section-heading mb-2">Loss Exceedance Curve (LEC): Annualized Financial Loss (₱) vs. Exceedance Probability</h4>
+              <div style="height:13rem"><canvas id="chart-qmod-lec"></canvas></div>
+            </div>
+          </section>
+
+          <!-- 5. Game Theory in Cashier Audit & Void Authorization -->
+          <section class="surface-card p-4 sm:p-5 space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-3">
+              <div>
+                <span class="text-[11px] font-bold uppercase tracking-wider text-roast">Topic 5 • QMODSIM Module 7</span>
+                <h3 class="font-display text-base font-semibold text-text-dark">5. Game Theory in Cashier Audit &amp; Void Authorization (2×2 Strategic Inspection Game)</h3>
+                <p id="qmod-t5-deterrence" class="text-xs text-slate-600"></p>
+              </div>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                <label class="field-label mb-0">Theft Payoff G (₱)
+                  <input id="qmod-gt-g" type="number" value="500" min="50" step="50" class="field-input field-input-sm qmod-input w-20 tabular-nums">
+                </label>
+                <label class="field-label mb-0">Penalty F (₱)
+                  <input id="qmod-gt-f" type="number" value="2500" min="100" step="100" class="field-input field-input-sm qmod-input w-20 tabular-nums">
+                </label>
+                <label class="field-label mb-0">Audit Cost C_audit (₱)
+                  <input id="qmod-gt-caudit" type="number" value="150" min="10" step="10" class="field-input field-input-sm qmod-input w-20 tabular-nums">
+                </label>
+                <label class="field-label mb-0">Loss Prevented L (₱)
+                  <input id="qmod-gt-l" type="number" value="500" min="50" step="50" class="field-input field-input-sm qmod-input w-20 tabular-nums">
+                </label>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 items-center">
+              <div class="grid grid-cols-2 gap-3">
+                <div class="kpi-card"><span class="kpi-label">Manager Optimal Audit Rate (σ_M*)</span><p id="qmod-t5-sigma-m" class="kpi-value text-crema tabular-nums">—</p></div>
+                <div class="kpi-card"><span class="kpi-label">Cashier Equilibrium Fraud Rate (σ_C*)</span><p id="qmod-t5-sigma-c" class="kpi-value text-espresso tabular-nums">—</p></div>
+              </div>
+              <div class="overflow-x-auto border border-slate-200 rounded-lg">
+                <table class="data-table text-xs">
+                  <thead>
+                    <tr>
+                      <th>Cashier Action (S_C)</th>
+                      <th>Manager: Routine Trust (EOD)</th>
+                      <th>Manager: Spot Audit + Server Void Auth</th>
+                    </tr>
+                  </thead>
+                  <tbody id="qmod-gt-matrix-body"></tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <!-- 6. Information Entropy & POS Terminal PIN Cryptanalysis -->
+          <section class="surface-card p-4 sm:p-5 space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-3">
+              <div>
+                <span class="text-[11px] font-bold uppercase tracking-wider text-roast">Topic 6 • QMODSIM Modules 2 &amp; 10</span>
+                <h3 class="font-display text-base font-semibold text-text-dark">6. Information Entropy &amp; POS Terminal PIN Cryptanalysis</h3>
+                <p class="text-xs text-slate-600">H(X) = log₂(10⁴) ≈ 13.29 bits • Active Rule: Lock Terminal for 5 Minutes after 3 Failed Attempts</p>
+              </div>
+              <label class="field-label mb-0 text-xs">Attacker Guess Rate R_guess (/min)
+                <input id="qmod-pin-rate" type="number" value="30" min="1" max="120" step="5" class="field-input field-input-sm qmod-input w-20 tabular-nums">
+              </label>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div class="kpi-card"><span class="kpi-label">Shannon Entropy H(X)</span><p id="qmod-t6-entropy" class="kpi-value text-text-dark tabular-nums">—</p></div>
+              <div class="kpi-card"><span class="kpi-label">Unthrottled Time-to-Compromise (T)</span><p id="qmod-t6-unthrottled" class="kpi-value text-espresso tabular-nums">—</p></div>
+              <div class="kpi-card"><span class="kpi-label">3-Strike / 5-Min Lockout Time-to-Compromise</span><p id="qmod-t6-locked" class="kpi-value text-crema tabular-nums">—</p></div>
+            </div>
+            <div class="chart-card">
+              <h4 class="section-heading mb-2">PIN Brute-Force Resilience: Unthrottled Keypad vs. 3-Attempt / 5-Min Lockout</h4>
+              <div style="height:12rem"><canvas id="chart-qmod-pin"></canvas></div>
+            </div>
+          </section>
+
+          <!-- 7. System Reliability Block Diagrams (RBD) & Offline Queue Resilience -->
+          <section class="surface-card p-4 sm:p-5 space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-3">
+              <div>
+                <span class="text-[11px] font-bold uppercase tracking-wider text-roast">Topic 7 • QMODSIM Module 12</span>
+                <h3 class="font-display text-base font-semibold text-text-dark">7. System Reliability Block Diagrams (RBD) &amp; Offline Queue Resilience</h3>
+                <p id="qmod-t7-live-status" class="text-xs font-semibold text-crema mt-0.5">LIVE CLOUD ACTIVE</p>
+              </div>
+              <div class="grid grid-cols-2 sm:grid-cols-6 gap-2 text-xs">
+                <label class="field-label mb-0">R_terminal
+                  <input id="qmod-rbd-terminal" type="number" value="0.9999" min="0.9" max="1" step="0.0001" class="field-input field-input-sm qmod-input w-20 tabular-nums">
+                </label>
+                <label class="field-label mb-0">R_network
+                  <input id="qmod-rbd-network" type="number" value="0.9910" min="0.8" max="1" step="0.001" class="field-input field-input-sm qmod-input w-20 tabular-nums">
+                </label>
+                <label class="field-label mb-0">R_cloud
+                  <input id="qmod-rbd-cloud" type="number" value="0.9990" min="0.9" max="1" step="0.0005" class="field-input field-input-sm qmod-input w-20 tabular-nums">
+                </label>
+                <label class="field-label mb-0">R_local_queue
+                  <input id="qmod-rbd-local" type="number" value="0.9950" min="0.9" max="1" step="0.001" class="field-input field-input-sm qmod-input w-20 tabular-nums">
+                </label>
+                <label class="field-label mb-0">MTBF (hrs)
+                  <input id="qmod-rbd-mtbf" type="number" value="2500" min="100" step="100" class="field-input field-input-sm qmod-input w-20 tabular-nums">
+                </label>
+                <label class="field-label mb-0">MTTR (hrs)
+                  <input id="qmod-rbd-mttr" type="number" value="0.25" min="0.05" step="0.05" class="field-input field-input-sm qmod-input w-20 tabular-nums">
+                </label>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div class="kpi-card"><span class="kpi-label">Live Cloud Series R_live(t)</span><p id="qmod-t7-live-rel" class="kpi-value text-espresso tabular-nums">—</p></div>
+              <div class="kpi-card"><span class="kpi-label">Parallel Fallback R_sys(t)</span><p id="qmod-t7-parallel-rel" class="kpi-value text-crema tabular-nums">—</p></div>
+              <div class="kpi-card"><span class="kpi-label">Inherent Availability (A)</span><p id="qmod-t7-availability" class="kpi-value text-crema tabular-nums">—</p></div>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 items-center">
+              <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200 text-xs space-y-2">
+                <p class="font-bold text-text-dark">Reliability Block Diagram (RBD) Architecture</p>
+                <div class="p-2.5 rounded bg-white border border-slate-200 font-mono text-[11px]">
+                  <span class="font-bold text-roast">[Live Series]</span> POS Client → Campus Wi-Fi → Express/Supabase API → PostgreSQL DB
+                </div>
+                <div class="p-2.5 rounded bg-white border border-emerald-300 font-mono text-[11px]">
+                  <span class="font-bold text-crema">[Offline Parallel Fallback]</span> POS Client → Signed Local Queue (SHA-256 + Idempotency) → Sync Manager
+                </div>
+                <p class="text-[11px] text-slate-600">Formula: R_sys(t) = R_terminal(t) · [1 − (1 − R_network(t)·R_cloud(t))(1 − R_local_queue(t))]</p>
+              </div>
+              <div class="chart-card">
+                <h4 class="section-heading mb-2">System Reliability Survival Curve R(t): Two Nines vs. Four Nines</h4>
+                <div style="height:12rem"><canvas id="chart-qmod-rbd"></canvas></div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- ═══ VIEW: MENU & RECIPES ═══ -->
+        <div id="view-menu-recipes" class="view-section hidden">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+            <div class="min-w-0">
+              <h2 class="view-heading">Menu &amp; Recipes</h2>
+              <p class="view-subheading">Edit a menu item's details and its ingredient recipe in one place.</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 lg:grid-cols-[20rem_1fr] gap-4 items-start">
+            <!-- Master: menu item list -->
+            <div class="surface-card overflow-hidden">
+              <div class="pane-header">
+                <span class="section-heading">Menu Items</span>
+                <button id="btn-add-menu-item" class="btn btn-secondary btn-lg flex-shrink-0" type="button">+ Add New Item</button>
+              </div>
+              <div class="p-3 border-b border-slate-200/80 bg-white">
+                <input type="text" id="recipe-search" placeholder="Search menu items..." aria-label="Search menu items" class="field-input w-full">
+                <label for="recipe-show-archived" class="mt-2.5 flex items-center gap-2 text-xs font-medium text-slate-600 cursor-pointer select-none">
+                  <input id="recipe-show-archived" type="checkbox">
+                  Show archived items
+                </label>
+              </div>
+              <div id="recipe-list" class="divide-y divide-slate-100 max-h-80 lg:max-h-[34rem] overflow-y-auto"></div>
+            </div>
+            <!-- Detail: item details + recipe editor -->
+            <div id="menu-recipes-detail-pane" class="surface-card p-4 sm:p-5">
+              <div class="flex items-center justify-between mb-3 pb-2.5 border-b border-slate-200/80">
+                <h3 id="recipe-detail-title" class="font-display text-base font-semibold text-text-dark">Select an item</h3>
+              </div>
+              <div id="recipe-detail"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══ VIEW: ADD-ONS ═══ -->
+        <div id="view-add-ons" class="view-section hidden">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+            <div class="min-w-0">
+              <h2 class="view-heading">Add-ons Management</h2>
+              <p class="view-subheading">Manage the optional extras available during drink customization.</p>
+            </div>
+            <button id="btn-add-addon" class="btn btn-primary btn-lg" type="button">+ Add Add-on</button>
+          </div>
+          <p id="addon-no-supply-note" class="hidden text-xs font-medium text-amber-800 bg-amber-50 border border-amber-300 rounded-lg px-3.5 py-2.5 mb-3">
+            Add a supply in Supplies Management first. An add-on needs at least one supply before it can be created.
+          </p>
+          <div id="addons-grid" class="grid grid-cols-1 gap-4 items-start">
+            <form id="addon-form" class="hidden surface-card p-4 sm:p-5">
+              <h3 id="addon-form-title" class="font-display text-base font-semibold text-text-dark mb-3 pb-2 border-b border-slate-200/80">Add an add-on</h3>
+              <label class="field-label" for="addon-name">Name</label>
+              <input id="addon-name" required class="field-input w-full mb-3" placeholder="e.g. Extra shot">
+              <label class="field-label" for="addon-price">Price</label>
+              <input id="addon-price" required type="number" min="0" step="0.01" class="field-input w-full mb-3 tabular-nums" placeholder="0.00">
+              <label class="field-label" for="addon-applies">Applies to</label>
+              <select id="addon-applies" class="field-input w-full mb-3">
+                <option value="drink">Drinks</option>
+                <option value="pastry">Pastries</option>
+              </select>
+              <label class="field-label" for="addon-supply-select">Supplies used (required)</label>
+              <div class="flex gap-2 mb-2">
+                <select id="addon-supply-select" class="field-input flex-1 min-w-0"></select>
+                <input id="addon-supply-qty" type="number" min="0.001" step="any" value="1" aria-label="Quantity" class="field-input w-20 tabular-nums">
+                <button id="btn-addon-add-supply" type="button" class="btn btn-secondary btn-lg">Add</button>
+              </div>
+              <ul id="addon-supply-list" class="mb-3 space-y-1.5 text-sm text-text-dark"></ul>
+              <label class="flex items-center gap-2 text-sm font-medium text-text-dark mb-4 cursor-pointer" for="addon-active">
+                <input id="addon-active" type="checkbox" checked>
+                Available at register and customer
+              </label>
+              <div class="flex gap-2 justify-end pt-3 border-t border-slate-200/80">
+                <button id="addon-cancel" type="button" class="btn btn-ghost btn-lg hidden">Cancel</button>
+                <button type="submit" class="btn btn-primary btn-lg">Save Add-on</button>
+              </div>
+            </form>
+            <div class="min-w-0">
+              <input id="addons-search" type="search" placeholder="Search add-ons..." aria-label="Search add-ons" class="field-input mb-3 w-full sm:w-72">
+              <div class="surface-card overflow-x-auto">
+                <table class="data-table" id="addons-table">
+                  <thead><tr><th>Add-on</th><th>Applies to</th><th>Price</th><th>Status</th><th>Actions</th></tr></thead>
+                  <tbody id="addons-table-body"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══ VIEW: SUPPLIES ═══ -->
+        <div id="view-supplies" class="view-section hidden">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+            <div class="min-w-0">
+              <h2 class="view-heading">Supplies Management</h2>
+              <p class="view-subheading">Manage stock quantities and track cost history. Changing a supply's cost never rewrites past reports — each report uses the price in effect when the order was completed.</p>
+            </div>
+            <button id="btn-add-supply" class="btn btn-primary btn-lg" type="button">+ Add Supply</button>
+          </div>
+          <input type="text" id="supplies-search" placeholder="Search supplies..." aria-label="Search supplies" class="field-input mb-3 w-full sm:w-72">
+          <div class="surface-card overflow-x-auto">
+            <table class="data-table" id="supplies-table">
+              <thead>
+                <tr>
+                  <th>Supply</th>
+                  <th>Unit</th>
+                  <th>Stock</th>
+                  <th>Current Cost/Unit</th>
+                  <th>Price History</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="supplies-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ═══ VIEW: TOOLS (storefront images + store settings) ═══ -->
+        <div id="view-tools" class="view-section hidden">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+            <div class="min-w-0">
+              <h2 class="view-heading">Tools</h2>
+              <p class="view-subheading">Storefront images and store settings used by the POS and the customer app.</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 items-start">
+            <section class="surface-card p-4 sm:p-5">
+              <h3 class="section-heading mb-3">Storefront Images</h3>
+              <label class="field-label" for="tools-carousel-url">Carousel Images (1–5)</label>
+              <input type="file" id="tools-carousel-url" accept="image/*" multiple class="w-full text-sm text-slate-600 file:mr-3 file:py-2 file:px-3.5 file:rounded-lg file:border file:border-slate-300 file:text-xs file:font-semibold file:bg-foam file:text-text-dark hover:file:bg-slate-200 file:cursor-pointer">
+              <p class="text-xs text-slate-600 mt-1.5">Each image is cropped to 16:9 before it is uploaded.</p>
+              <div id="tools-carousel-preview" class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 mt-3"></div>
+            </section>
+
+            <section class="surface-card p-4 sm:p-5">
+              <h3 class="section-heading mb-1">Store Settings</h3>
+              <p class="text-xs text-slate-600 mb-4">These values are stored in the database and used by the POS and the customer app.</p>
+              <form id="settings-form" class="space-y-4">
+                <div>
+                  <label for="settings-vat" class="field-label">VAT rate (%)</label>
+                  <input id="settings-vat" type="number" min="0" max="100" step="0.01" class="field-input w-full tabular-nums">
+                  <p class="text-xs text-slate-600 mt-1">Enter 12 for 12%.</p>
+                </div>
+                <div>
+                  <label for="settings-large-upcharge" class="field-label">Large drink upcharge (&#8369;)</label>
+                  <input id="settings-large-upcharge" type="number" min="0" step="0.01" class="field-input w-full tabular-nums">
+                </div>
+                <div>
+                  <label for="settings-estimated-minutes" class="field-label">Estimated prep time (minutes)</label>
+                  <input id="settings-estimated-minutes" type="number" min="0" step="1" class="field-input w-full tabular-nums">
+                </div>
+                <div class="flex justify-end border-t border-slate-200/80 pt-3">
+                  <button type="submit" class="btn btn-primary btn-lg">Save Settings</button>
+                </div>
+              </form>
+            </section>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       VOID / REFUND ORDER CONFIRMATION MODAL (QMODSIM Module 5 & 7)
+       ============================================================ -->
+  <div id="void-modal" class="modal-backdrop">
+    <div class="modal-card">
+      <h3 id="void-modal-title" class="font-display text-lg font-semibold text-espresso mb-2">Void Order</h3>
+      <p class="text-sm text-slate-700 mb-1">Are you sure you want to void or refund this order?</p>
+      <p class="text-xs text-slate-600 mb-3">This action transitions the ticket to an absorbing state (S₅ Voided / S₆ Refunded) and logs to the Game Theory audit trail.</p>
+      <div id="void-modal-order-id" class="text-sm font-semibold text-text-dark mb-3"></div>
+      <div id="void-spot-audit-banner" class="hidden mb-3 p-2.5 rounded-lg bg-amber-50 border border-amber-300 text-xs text-amber-900">
+        <strong>Random Spot-Audit Triggered (σ_M* = <span id="void-spot-audit-pct">16.7%</span>):</strong> Game Theory Nash Equilibrium selected this transaction for mandatory Manager audit review.
+      </div>
+      <div class="space-y-2.5 mb-4">
+        <div>
+          <label for="void-reason-input" class="field-label">Reason for Void / Refund</label>
+          <input id="void-reason-input" type="text" class="field-input w-full" placeholder="e.g. Customer changed mind, Wrong item rung">
+        </div>
+        <div>
+          <label for="void-manager-pin" class="field-label">Manager Override PIN (4-digit, optional if Manager)</label>
+          <input id="void-manager-pin" type="password" inputmode="numeric" maxlength="4" class="field-input w-full tabular-nums" placeholder="••••">
+        </div>
+      </div>
+      <div class="flex gap-2 justify-end">
+        <button id="btn-void-cancel" class="btn btn-ghost" type="button">Cancel</button>
+        <button id="btn-void-confirm" class="btn btn-void" type="button">Yes, Void Order</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       ORDER DETAIL MODAL
+       ============================================================ -->
+  <div id="order-detail-modal" class="modal-backdrop">
+    <div class="modal-card max-w-lg">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-display text-lg font-semibold text-text-dark" id="detail-order-id"></h3>
+        <button id="btn-close-detail" class="modal-close-btn" type="button" aria-label="Close">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div id="detail-customer" class="order-claim-name hidden mb-3">
+        <span class="order-claim-label">Claimed by</span>
+        <span class="order-claim-value" id="detail-customer-name"></span>
+      </div>
+      <div id="detail-items" class="space-y-2 mb-4 max-h-[50vh] overflow-y-auto"></div>
+      <div class="border-t border-slate-200 pt-3 flex justify-between items-center">
+        <span class="text-sm text-slate-600" id="detail-payment"></span>
+        <span class="font-bold text-text-dark tabular-nums" id="detail-total"></span>
+      </div>
+      <div class="flex gap-2 mt-4 justify-end" id="detail-actions"></div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       SUPPLY ADD / EDIT MODAL
+       ============================================================ -->
+  <div id="supplies-modal" class="modal-backdrop">
+    <div class="modal-card max-w-lg">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-display text-lg font-semibold text-text-dark" id="supplies-form-title">Add Supply</h3>
+        <button id="btn-supply-cancel" class="modal-close-btn" type="button" aria-label="Close">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3 mb-3">
+        <div class="col-span-2">
+          <label for="sup-name" class="field-label">Supply Name</label>
+          <input type="text" id="sup-name" class="field-input w-full" placeholder="e.g. Whole Milk">
+        </div>
+        <div>
+          <label for="sup-unit" class="field-label">Unit</label>
+          <select id="sup-unit" class="field-input w-full">
+            <option value="g">g</option>
+            <option value="ml">ml</option>
+            <option value="pc">pc</option>
+          </select>
+        </div>
+        <div>
+          <label for="sup-stock" class="field-label">Stock On Hand</label>
+          <input type="number" id="sup-stock" class="field-input w-full tabular-nums" min="0" step="0.01" value="0">
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <div class="flex items-center justify-between mb-1">
+          <label class="field-label mb-0">Cost History (price per unit over time)</label>
+          <button id="btn-add-pricelog" class="btn btn-secondary btn-sm" type="button">+ Add Price Entry</button>
+        </div>
+        <p class="text-xs text-slate-600 mb-2">Reports use the cost in effect on the order's completion date. Add multiple dated entries to record price changes.</p>
+        <div id="sup-price-logs" class="space-y-2 max-h-[40vh] overflow-y-auto"></div>
+      </div>
+
+      <div class="flex gap-2 justify-end pt-3 border-t border-slate-200/80">
+        <button id="btn-supply-cancel2" class="btn btn-ghost btn-lg" type="button">Cancel</button>
+        <button id="btn-supply-save" class="btn btn-primary btn-lg" type="button">Save Supply</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       SUPPLY PRICE HISTORY MODAL
+       ============================================================ -->
+  <div id="supply-history-modal" class="modal-backdrop">
+    <div class="modal-card max-w-sm">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="font-display text-base font-semibold text-text-dark" id="history-card-title">Price History</h3>
+        <button id="btn-close-history" class="modal-close-btn" type="button" aria-label="Close">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div id="history-card-body"></div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       DELETE CONFIRMATION MODAL
+       ============================================================ -->
+  <div id="delete-confirm-modal" class="modal-backdrop">
+    <div class="modal-card">
+      <h3 id="delete-modal-title" class="font-display text-lg font-semibold text-espresso mb-2"></h3>
+      <p id="delete-modal-msg" class="text-sm text-slate-600 mb-4"></p>
+      <div class="flex gap-2 justify-end">
+        <button id="btn-delete-cancel" class="btn btn-ghost" type="button">Cancel</button>
+        <button id="btn-delete-confirm" class="btn btn-void" type="button">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       CASH DRAWER MODAL (Pay In / Pay Out)
+       ============================================================ -->
+  <div id="cash-drawer-modal" class="modal-backdrop">
+    <div class="modal-card max-w-lg">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-display text-lg font-semibold text-text-dark">Cash Drawer</h3>
+        <button id="btn-cash-drawer-cancel" class="modal-close-btn" type="button" aria-label="Close">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="space-y-3 mb-4">
+        <div>
+          <label for="cd-type" class="field-label">Transaction Type</label>
+          <select id="cd-type" class="field-input w-full">
+            <option value="payIn">Pay In (Add to register)</option>
+            <option value="payOut">Pay Out (Remove from register)</option>
+          </select>
+        </div>
+        <div>
+          <label for="cd-amount" class="field-label">Amount (&#8369;)</label>
+          <input type="number" id="cd-amount" min="0" step="5" class="field-input w-full tabular-nums" placeholder="0.00">
+        </div>
+        <div>
+          <label for="cd-reason" class="field-label">Reason</label>
+          <input type="text" id="cd-reason" class="field-input w-full" placeholder="e.g. Buying ice, Opening change fund">
+        </div>
+      </div>
+
+      <div class="flex gap-2 justify-end border-t border-slate-200/80 pt-3">
+        <button id="btn-cash-drawer-cancel2" class="btn btn-ghost" type="button">Cancel</button>
+        <button id="btn-cash-drawer-save" class="btn btn-primary" type="button">Record Transaction</button>
+      </div>
+
+      <!-- QMODSIM Module 4: Blind Shift Drawer Reconciliation -->
+      <div class="mt-4 pt-4 border-t border-slate-200">
+        <div class="flex items-center justify-between mb-1">
+          <h4 class="font-display text-sm font-semibold text-text-dark">Blind Shift Drawer Close (FAIR Control)</h4>
+          <span class="text-[10px] font-bold uppercase tracking-wider text-roast">Module 4</span>
+        </div>
+        <p class="text-xs text-slate-600 mb-2.5">Enter physical counted cash blindly. Expected drawer balance is hidden until submission to prevent reconciliation tampering.</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-2.5">
+          <div>
+            <label for="cd-blind-counted" class="field-label">Physical Counted Cash (&#8369;)</label>
+            <input type="number" id="cd-blind-counted" min="0" step="0.01" class="field-input w-full tabular-nums" placeholder="0.00">
+          </div>
+          <div>
+            <label for="cd-blind-notes" class="field-label">Shift Close Notes</label>
+            <input type="text" id="cd-blind-notes" class="field-input w-full" placeholder="e.g. PM Shift Close">
+          </div>
+        </div>
+        <div class="flex justify-end">
+          <button id="btn-blind-close-save" class="btn btn-secondary btn-sm" type="button">Submit Blind Shift Close</button>
+        </div>
+        <div id="cd-blind-result" class="hidden"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       SPLIT 2-COLUMN CHECKOUT / PAYMENT TENDER MODAL (Video 00:24–00:28)
+       ============================================================ -->
+  <div id="tender-modal" class="modal-backdrop">
+    <div class="modal-card reg-tender-split-card">
+      <div class="reg-tender-split-grid">
+
+        <!-- Left Column: Order Summary Card -->
+        <div class="reg-tender-left-pane">
+          <div class="reg-tender-pane-head">
+            <div class="flex items-center gap-2">
+              <svg class="w-4 h-4 text-emerald-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+              <h3 class="reg-tender-pane-title">Order Summary</h3>
+            </div>
+            <span class="reg-tender-count" id="reg-tender-count">0 items</span>
+          </div>
+
+          <!-- Itemized preview list with thumbnails -->
+          <div class="reg-tender-items-list" id="reg-tender-items"></div>
+
+          <!-- PWD / Senior Citizen 20% Discount Toggle -->
+          <label class="reg-pwd-toggle" for="pwd-discount-toggle">
+            <input type="checkbox" id="pwd-discount-toggle">
+            <span>Apply PWD / Senior Citizen discount (20%)</span>
+          </label>
+
+          <!-- Summary Math -->
+          <div class="reg-tender-summary">
+            <div><span>Subtotal</span><span id="reg-tender-subtotal">&#8369;0.00</span></div>
+            <div><span>PWD / Senior Citizen discount (20%)</span><span id="reg-tender-discount">&#8369;0.00</span></div>
+            <div><span>VAT (12%)</span><span id="reg-tender-vat">&#8369;0.00</span></div>
+            <div class="reg-tender-final">
+              <span>Total Amount</span>
+              <span id="reg-tender-final">&#8369;0.00</span>
+            </div>
+          </div>
+          <!-- Hidden/mirrored amount hook for backward compatibility -->
+          <p class="reg-tender-amount hidden" id="reg-tender-amount">&#8369;0.00</p>
+        </div>
+
+        <!-- Right Column: Select Payment Method & Cash Calculator -->
+        <div class="reg-tender-right-pane">
+          <div class="flex items-center justify-between mb-3">
+            <div>
+              <h3 class="reg-tender-method-heading">Select Payment Method</h3>
+              <p class="text-xs text-slate-600">Choose tender type and verify customer change.</p>
+            </div>
+            <button id="btn-tender-close" class="modal-close-btn" type="button" aria-label="Close">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>
+
+          <div class="reg-tender-opts" role="tablist" aria-label="Payment method">
+            <button type="button" class="reg-tender-opt active" data-method="cash">
+              <span class="reg-tender-opt-top">
+                <span class="reg-tender-opt-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg>
+                </span>
+                <span class="reg-tender-opt-arrow">›</span>
+              </span>
+              <span class="reg-tender-opt-title">Cash</span>
+              <span class="reg-tender-opt-sub">Pay at counter</span>
+            </button>
+
+            <button type="button" class="reg-tender-opt" data-method="qr" disabled>
+              <span class="reg-tender-opt-top">
+                <span class="reg-tender-opt-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM18 18h3v3h-3zM14 19h2M19 14v2"/></svg>
+                </span>
+                <span class="reg-tender-opt-arrow">›</span>
+              </span>
+              <span class="reg-tender-opt-title">QR payment unavailable</span>
+              <span class="reg-tender-opt-sub">Scan digital wallet</span>
+            </button>
+          </div>
+
+          <!-- Interactive Cash Received & Change Due Box -->
+          <div class="reg-cash-calc-box" id="reg-cash-calc-box">
+            <div class="flex items-center justify-between mb-1.5">
+              <label for="reg-tender-received" class="field-label mb-0">Amount Received (&#8369;)</label>
+              <div class="reg-quick-bills" id="reg-quick-bills">
+                <button type="button" class="reg-bill-chip" data-bill="exact">Exact</button>
+                <button type="button" class="reg-bill-chip" data-bill="100">&#8369;100</button>
+                <button type="button" class="reg-bill-chip" data-bill="200">&#8369;200</button>
+                <button type="button" class="reg-bill-chip" data-bill="500">&#8369;500</button>
+                <button type="button" class="reg-bill-chip" data-bill="1000">&#8369;1,000</button>
+              </div>
+            </div>
+            <input type="number" id="reg-tender-received" min="0" step="0.01" aria-describedby="reg-amount-locked" class="field-input w-full tabular-nums font-bold text-base" placeholder="0.00">
+            <p id="reg-amount-locked" hidden>Locked to the QR Ph order total.</p>
+            <div class="reg-change-row">
+              <span>Change Due</span>
+              <strong id="reg-tender-change" class="tabular-nums">&#8369;0.00</strong>
+            </div>
+          </div>
+
+          <div class="flex gap-2 justify-end mt-auto pt-4">
+            <button id="btn-tender-cancel" class="btn btn-ghost btn-lg" type="button">Cancel</button>
+            <button id="btn-tender-confirm" class="btn btn-primary btn-lg flex-1" type="button">Confirm Payment</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       SPLIT 2-COLUMN DRINK CUSTOMIZATION MODAL (Video 00:13–00:16)
+       ============================================================ -->
+  <div id="item-customization-modal" class="modal-backdrop">
+    <div class="modal-card reg-customization-card">
+      <div class="reg-cust-split">
+
+        <!-- Left Column: Visual Hero + Title + Size & Temperature -->
+        <div class="reg-cust-left">
+          <div class="reg-cust-visual" id="customization-item-visual"></div>
+          <div class="reg-cust-meta">
+            <h3 class="reg-cust-title" id="customization-item-name">—</h3>
+            <span class="reg-cust-cat-pill" id="customization-item-cat">Drinks</span>
+          </div>
+
+          <div id="customization-size-section" class="reg-customization-section">
+            <div class="reg-section-label">Size</div>
+            <div id="customization-size-options" class="reg-customization-options" role="group" aria-label="Drink size"></div>
+          </div>
+
+          <div id="customization-temperature-section" class="reg-customization-section">
+            <div class="reg-section-label">Temperature</div>
+            <div id="customization-temperature-options" class="reg-customization-options" role="group" aria-label="Hot or iced"></div>
+          </div>
+        </div>
+
+        <!-- Right Column: Add-ons List + Special Note + Add to Order Footer -->
+        <div class="reg-cust-right">
+          <div class="reg-customization-head">
+            <div>
+              <span class="reg-section-label mb-0">Customize &amp; Add-ons</span>
+              <p class="text-xs text-slate-600">Select optional extras and special instructions.</p>
+            </div>
+            <button id="btn-customization-close" class="modal-close-btn" type="button" aria-label="Close customization">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>
+
+          <div class="reg-cust-scroll-body">
+            <div class="reg-customization-section">
+              <div id="customization-addon-groups"></div>
+            </div>
+
+            <div class="reg-customization-section">
+              <div class="reg-section-label">Special Instruction</div>
+              <label class="reg-note-label" for="customization-note">Type a request</label>
+              <input id="customization-note" class="reg-customization-note" type="text" placeholder="e.g. no sugar or less ice" autocomplete="off">
+            </div>
+          </div>
+
+          <div class="reg-cust-footer">
+            <button id="btn-customization-cancel" class="btn btn-ghost btn-lg" type="button">Cancel</button>
+            <button id="btn-customization-confirm" class="btn btn-primary btn-lg reg-cust-confirm-btn" type="button">
+              <span>Add to Order</span>
+              <strong id="reg-customization-total" class="tabular-nums">&#8369;0.00</strong>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       SPLIT 2-COLUMN PAYMENT SUCCESSFUL & THERMAL RECEIPT MODAL (Video 00:00–00:03 & 00:29–00:32)
+       ============================================================ -->
+  <div id="receipt-modal" class="modal-backdrop">
+    <div class="modal-card reg-receipt-split-card">
+      <div class="reg-receipt-split-grid">
+
+        <!-- Left Card: Payment Successful! Summary -->
+        <div class="reg-receipt-success-card">
+          <div class="reg-success-icon-wrap" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+          </div>
+          <h3 class="reg-success-title">Payment Successful!</h3>
+          <p class="reg-success-invoice" id="receipt-success-invoice">INVOICE: #—</p>
+
+          <div class="reg-success-amount-box">
+            <span class="reg-success-amount-label">TOTAL AMOUNT PAID</span>
+            <p class="reg-success-amount-value tabular-nums" id="receipt-success-total">&#8369;0.00</p>
+            <div class="reg-success-divider"></div>
+            <div class="reg-success-row">
+              <span>Amount Received</span>
+              <strong class="tabular-nums" id="receipt-success-received">&#8369;0.00</strong>
+            </div>
+            <div class="reg-success-row">
+              <span>Change Due</span>
+              <strong class="tabular-nums text-emerald-700" id="receipt-success-change">&#8369;0.00</strong>
+            </div>
+            <div class="reg-success-row">
+              <span>Payment Method</span>
+              <strong id="receipt-success-method">Cash</strong>
+            </div>
+          </div>
+
+          <div class="reg-success-actions">
+            <button id="btn-receipt-close" class="btn btn-secondary btn-lg flex-1" type="button">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/></svg>
+              <span>New Order</span>
+            </button>
+            <button id="btn-receipt-print" class="btn btn-primary btn-lg flex-1" type="button">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2M6 14h12v8H6v-8z"/></svg>
+              <span>Print Receipt</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Right Column: Live Thermal Paper Receipt Preview -->
+        <div class="reg-receipt-preview-pane">
+          <div class="reg-receipt-preview-bar">
+            <span class="reg-receipt-preview-label">Receipt preview</span>
+            <div class="reg-receipt-size-btns" role="group" aria-label="Thermal paper width">
+              <button type="button" class="reg-paper-btn" data-paper="58mm">58mm</button>
+              <button type="button" class="reg-paper-btn active" data-paper="80mm">80mm</button>
+            </div>
+          </div>
+          <div class="reg-receipt-paper-stage">
+            <div id="receipt-body" class="receipt"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       IMAGE CROP MODAL
+       ============================================================ -->
+  <dialog id="image-crop-modal" class="image-crop-dialog" aria-labelledby="image-crop-title">
+    <div class="image-crop-body">
+      <h2 id="image-crop-title" class="font-display text-lg font-semibold text-text-dark">Crop image</h2>
+      <p class="text-xs text-slate-600 mt-1 mb-3">Drag to choose the part of the image to keep.</p>
+      <div class="image-crop-stage">
+        <img id="image-crop-source" alt="Image crop preview">
+      </div>
+      <div class="flex gap-2 justify-end mt-4">
+        <button id="image-crop-cancel" class="btn btn-ghost" type="button">Cancel</button>
+        <button id="image-crop-confirm" class="btn btn-primary" type="button">Use crop</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- ============================================================
+       TOAST CONTAINER
+       ============================================================ -->
+  <div id="toast-container" class="fixed bottom-5 left-4 sm:left-24 z-[200] space-y-2"></div>
+
+  <!-- ============================================================
+       SCRIPTS
+       ============================================================ -->
+  <script src="../menu-initials.js"></script>
+  <script src="../form-validation.js"></script>
+  <script src="../order-sync.js"></script>
+  <script src="../qr-checkout.js"></script>
+  <script src="js/data.js"></script>
+  <script src="quote.js"></script>
+  <script src="js/offline-store.js"></script>
+  <script src="js/offline-pos.js"></script>
+  <script src="../auth.js"></script>
+  <script src="js/addons.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/orders.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/image-cropper.js"></script>
+  <script src="js/inventory.js"></script>
+  <script src="js/tools.js"></script>
+  <script src="js/register.js"></script>
+  <script src="js/settings.js"></script>
+  <script src="js/offline-queue.js"></script>
+  <script src="js/qmodsim.js"></script>
+</body>
+</html>

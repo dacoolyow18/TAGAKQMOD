@@ -1,0 +1,46 @@
+.qr-payment {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: min(25rem, calc(100% - 2rem));
+  max-height: calc(100dvh - 2rem);
+  overflow-y: auto;
+  padding: clamp(1.25rem, 4vw, 2rem);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xl, var(--radius));
+  background: var(--bg-elevated, var(--bg));
+  color: var(--ink);
+  font-family: inherit;
+  text-align: center;
+  box-shadow: var(--shadow-lg, 0 16px 48px rgba(31, 45, 36, .2));
+}
+
+.qr-payment::backdrop { background: rgba(20, 30, 24, .58); }
+
+.qr-payment h2 {
+  font: 600 1.6rem/1.2 var(--font-display);
+}
+
+.qr-payment img {
+  display: block;
+  width: min(100%, 13rem);
+  height: auto;
+  margin: 1.25rem auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md, var(--radius));
+  background: white;
+}
+
+.qr-payment p {
+  margin: 1rem 0;
+  color: var(--muted, var(--text-dim));
+  font-size: .9375rem;
+  line-height: 1.5;
+}
+
+.qr-payment-actions {
+  display: grid;
+  gap: .5rem;
+}
+
+.qr-payment [hidden] { display: none; }

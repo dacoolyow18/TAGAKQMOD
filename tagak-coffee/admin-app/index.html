@@ -1,0 +1,603 @@
+<!--
+  File: index.html
+  Path: admin-app/index.html
+  Description: Tagak Coffee Admin Panel — unified operational shell aligned with Tagak POS.
+               Structure & presentation only. All IDs, data-* hooks, and
+               handlers consumed by js/admin.js are preserved.
+               Views: Overview · Branches · Employees · Admins · Roles & Permissions.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tagak Admin</title>
+
+  <!-- Compiled utility styles -->
+  <link rel="stylesheet" href="/vendor/tailwind.css">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400;1,500;1,600;1,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="css/admin.css">
+  <style>[hidden] { display: none !important; }</style>
+</head>
+
+<body>
+
+  <!-- ============================================================
+       DASHBOARD LAYOUT (unified with Tagak POS shell)
+       ============================================================ -->
+  <div id="app-layout" class="layout">
+
+    <!-- Mobile sidebar overlay -->
+    <div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+    <!-- ── DEEP FOREST SLIM NAVIGATION RAIL ── -->
+    <aside class="sidebar" id="app-sidebar" aria-label="Admin sidebar">
+      <!-- Brand -->
+      <div class="sidebar-brand">
+        <img src="assets/tagak-logo-admin-v2.png" alt="Tagak Coffee logo" class="sidebar-logo-img" width="40" height="40">
+        <div class="sidebar-brand-text">
+          <span class="sidebar-brand-title">Tagak Admin</span>
+          <span class="sidebar-brand-sub">Back Office</span>
+        </div>
+      </div>
+
+      <!-- Navigation -->
+      <nav class="sidebar-nav" aria-label="Primary">
+        <button type="button" class="sidebar-item active" data-view="overview" data-testid="nav-overview" aria-current="page" title="Overview">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 13h6V4H4v9Zm0 7h6v-4H4v4Zm10 0h6v-9h-6v9Zm0-16v4h6V4h-6Z"/></svg>
+          <span class="sidebar-item-label">Overview</span>
+        </button>
+
+        <button type="button" class="sidebar-item" data-view="branches" data-testid="nav-branches" title="Branches">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+          <span class="sidebar-item-label">Branches</span>
+        </button>
+
+        <button type="button" class="sidebar-item" data-view="employees" data-testid="nav-employees" title="Employees">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+          <span class="sidebar-item-label">Employees</span>
+        </button>
+
+        <button type="button" class="sidebar-item" data-view="admins" data-testid="nav-admins" title="Admins">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+          <span class="sidebar-item-label">Admins</span>
+        </button>
+
+        <button type="button" class="sidebar-item" data-view="roles" data-testid="nav-roles" title="Roles &amp; Permissions">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+          <span class="sidebar-item-label">Roles &amp; Permissions</span>
+        </button>
+      </nav>
+
+      <!-- Signed-in user at bottom (desktop rail + mobile drawer) -->
+      <div class="sidebar-footer">
+        <div class="sidebar-user-chip">
+          <div class="sidebar-avatar" id="sidebar-avatar" aria-hidden="true"></div>
+          <div class="sidebar-user-meta">
+            <p class="sidebar-username" id="sidebar-username"></p>
+            <p class="sidebar-role" id="sidebar-role"></p>
+          </div>
+        </div>
+        <div class="hidden">
+          <span id="sidebar-avatar-mobile"></span>
+          <span id="sidebar-username-mobile"></span>
+          <span id="sidebar-role-mobile"></span>
+        </div>
+        <button id="btn-logout" type="button" class="sidebar-logout" aria-label="Log out" title="Log out">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+          <span>Log out</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- ── MAIN AREA ── -->
+    <div class="main-area">
+
+      <!-- Global Operational Header (matches Tagak POS) -->
+      <header class="header">
+        <div class="header-left flex-1 min-w-0">
+          <button type="button" id="btn-hamburger" data-testid="nav-toggle" class="hamburger-btn" aria-label="Open navigation menu">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+          </button>
+          <span class="header-title truncate" id="view-title" aria-current="page">Overview</span>
+        </div>
+
+        <div class="header-right flex-shrink-0">
+          <span class="header-clock" id="header-clock"></span>
+
+          <div class="header-store-pill">
+            <span class="header-store-dot" aria-hidden="true"></span>
+            <span class="header-store-label" id="header-role-pill">Admin Console</span>
+          </div>
+
+          <span class="header-cashier-badge" id="header-admin"></span>
+        </div>
+      </header>
+
+      <!-- Scrollable Workspace Content -->
+      <main class="content">
+
+        <!-- ═══ VIEW: OVERVIEW ═══ -->
+        <section id="view-overview" class="view-section" aria-labelledby="title-overview">
+          <div class="view-header-bar mb-4">
+            <div class="min-w-0">
+              <h1 class="view-heading" id="title-overview">Good morning, <em>Tagak.</em></h1>
+              <p class="view-subheading">Keep the people, store branches, and POS permissions behind every cup in order.</p>
+            </div>
+            <div class="overview-actions" aria-label="Quick actions">
+              <button type="button" class="btn btn-secondary btn-lg" data-view-target="branches" data-testid="overview-branches">Manage branches</button>
+              <button type="button" class="btn btn-primary btn-lg" data-action="open-add-employee" data-testid="overview-add-employee">Add employee</button>
+            </div>
+          </div>
+
+          <!-- KPI Strip (matches POS Analytics KPI cards) -->
+          <div class="overview-stats" aria-label="Workspace summary">
+            <article class="kpi-card">
+              <span class="kpi-label">Active employees</span>
+              <strong class="kpi-value tabular-nums" id="overview-active-employees">—</strong>
+              <span class="kpi-sub" id="overview-employee-caption">Across your workspace</span>
+            </article>
+            <article class="kpi-card">
+              <span class="kpi-label">Branches</span>
+              <strong class="kpi-value tabular-nums" id="overview-branches">—</strong>
+              <span class="kpi-sub">Configured locations</span>
+            </article>
+            <article class="kpi-card">
+              <span class="kpi-label">Admin accounts</span>
+              <strong class="kpi-value tabular-nums" id="overview-admins">—</strong>
+              <span class="kpi-sub" id="overview-admin-caption">With workspace access</span>
+            </article>
+            <article class="kpi-card">
+              <span class="kpi-label">Permission roles</span>
+              <strong class="kpi-value tabular-nums">5</strong>
+              <span class="kpi-sub">16 POS &amp; Admin controls</span>
+            </article>
+          </div>
+
+          <!-- Two-pane operational directory & access governance -->
+          <div class="overview-grid">
+            <section class="surface-card overview-panel overview-panel--wide" aria-labelledby="workspace-health-title">
+              <div class="pane-header">
+                <h2 class="section-heading" id="workspace-health-title">Everything in its place</h2>
+                <span class="badge badge-queued"><span class="status-dot" aria-hidden="true"></span>All systems ready</span>
+              </div>
+              <div class="health-list">
+                <button type="button" class="health-row" data-view-target="employees" data-testid="overview-employees-row">
+                  <span class="health-icon" aria-hidden="true">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                  </span>
+                  <span class="health-copy">
+                    <strong>People &amp; Staff PINs</strong>
+                    <small>Branch-grouped employee accounts and 4-digit POS terminal access</small>
+                  </span>
+                  <span class="health-link">Open →</span>
+                </button>
+                <button type="button" class="health-row" data-view-target="branches" data-testid="overview-branches-row">
+                  <span class="health-icon" aria-hidden="true">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                  </span>
+                  <span class="health-copy">
+                    <strong>Locations &amp; Branches</strong>
+                    <small>Store branch codes, physical addresses, and assigned branch managers</small>
+                  </span>
+                  <span class="health-link">Open →</span>
+                </button>
+                <button type="button" class="health-row" data-view-target="roles" data-testid="overview-access-row">
+                  <span class="health-icon" aria-hidden="true">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                  </span>
+                  <span class="health-copy">
+                    <strong>Access &amp; RBAC Matrix</strong>
+                    <small>Role permissions for Super Admin, Admin, Manager, Barista, and Cashier</small>
+                  </span>
+                  <span class="health-link">Review →</span>
+                </button>
+              </div>
+            </section>
+
+            <aside class="surface-card overview-panel overview-panel--note" aria-labelledby="workspace-note-title">
+              <div class="pane-header">
+                <h2 class="section-heading" id="workspace-note-title">Operational Governance</h2>
+                <span class="badge badge-completed">Live Sync</span>
+              </div>
+              <p class="overview-note-lead">Changes to branch codes, staff 4-digit PINs, and role permissions apply immediately across all Tagak POS counter terminals.</p>
+              <ul class="overview-policy-list">
+                <li><strong>Branch Staff:</strong> Sign in at the POS counter using a 4-digit numeric PIN tied to their assigned branch.</li>
+                <li><strong>Managers:</strong> Access POS analytics, recipes, supply costing, and storefront tools.</li>
+                <li><strong>Admins:</strong> Configure multi-branch records, accounts, and the 16-permission RBAC matrix.</li>
+              </ul>
+              <div class="overview-note-foot">
+                <button type="button" class="btn btn-secondary btn-sm" data-view-target="roles" data-testid="overview-review-access">Review access →</button>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <!-- ═══ VIEW: EMPLOYEES ═══ -->
+        <section id="view-employees" class="view-section hidden" aria-labelledby="title-employees">
+          <div class="view-header-bar mb-4">
+            <div class="min-w-0">
+              <h1 class="view-heading" id="title-employees">Employee Accounts</h1>
+              <p class="view-subheading">Employees grouped by branch. Open a branch to manage its team and PIN access.</p>
+            </div>
+            <div class="page-actions">
+              <button type="button" id="btn-add-employee" data-testid="add-employee" class="btn btn-primary btn-lg">Add employee</button>
+            </div>
+          </div>
+
+          <div class="toolbar" role="search">
+            <div class="toolbar-search">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z"/></svg>
+              <label class="sr-only" for="employee-search">Search employees</label>
+              <input type="search" id="employee-search" data-testid="employee-search" class="field-input" placeholder="Search by name or email" aria-label="Search employees">
+            </div>
+            <div class="toolbar-search toolbar-search--code">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5"/></svg>
+              <label class="sr-only" for="employee-branch-search">Filter employees by branch code</label>
+              <input type="search" id="employee-branch-search" data-testid="employee-branch-search" class="field-input tabular-nums" inputmode="numeric" placeholder="Branch Code" aria-label="Filter employees by branch code">
+            </div>
+            <div class="toolbar-filters">
+              <label class="sr-only" for="employee-filter-role">Filter by role</label>
+              <select id="employee-filter-role" data-testid="employee-role-filter" class="field-input" aria-label="Filter employees by role">
+                <option value="">All roles</option>
+                <option value="Manager">Manager</option>
+                <option value="Barista">Barista</option>
+                <option value="Cashier">Cashier</option>
+              </select>
+              <label class="sr-only" for="employee-filter-status">Filter by status</label>
+              <select id="employee-filter-status" data-testid="employee-status-filter" class="field-input" aria-label="Filter employees by status">
+                <option value="">All statuses</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="branch-groups" id="employees-branches"></div>
+
+          <div class="summary-bar" aria-live="polite">
+            <span id="employees-total" class="tabular-nums">0 total</span>
+            <span id="employees-active-count" class="stat-ok tabular-nums">0 active</span>
+            <span id="employees-inactive-count" class="stat-off tabular-nums">0 inactive</span>
+          </div>
+        </section>
+
+        <!-- ═══ VIEW: ADMINS ═══ -->
+        <section id="view-admins" class="view-section hidden" aria-labelledby="title-admins">
+          <div class="view-header-bar mb-4">
+            <div class="min-w-0">
+              <h1 class="view-heading" id="title-admins">Admin Accounts</h1>
+              <p class="view-subheading">Manage Admin and Super Admin accounts with full system control.</p>
+            </div>
+            <div class="page-actions">
+              <button type="button" id="btn-add-admin" data-testid="add-admin" class="btn btn-primary btn-lg">Add admin</button>
+            </div>
+          </div>
+
+          <div class="toolbar" role="search">
+            <div class="toolbar-search">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z"/></svg>
+              <label class="sr-only" for="admin-search">Search admins</label>
+              <input type="search" id="admin-search" data-testid="admin-search" class="field-input" placeholder="Search by name or email" aria-label="Search admins">
+            </div>
+            <div class="toolbar-filters">
+              <label class="sr-only" for="admin-filter-role">Filter by role</label>
+              <select id="admin-filter-role" data-testid="admin-role-filter" class="field-input" aria-label="Filter admins by role">
+                <option value="">All roles</option>
+                <option value="Admin">Admin</option>
+                <option value="Super Admin">Super Admin</option>
+              </select>
+              <label class="sr-only" for="admin-filter-status">Filter by status</label>
+              <select id="admin-filter-status" data-testid="admin-status-filter" class="field-input" aria-label="Filter admins by status">
+                <option value="">All statuses</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <table class="data-table" id="admins-table">
+              <caption class="sr-only">Admin accounts</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Admin</th>
+                  <th scope="col">Role</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Created</th>
+                  <th scope="col"><span class="sr-only">Actions</span></th>
+                </tr>
+              </thead>
+              <tbody id="admins-tbody"></tbody>
+            </table>
+          </div>
+
+          <div class="summary-bar" aria-live="polite">
+            <span id="admins-total" class="tabular-nums">0 total</span>
+            <span id="admins-active-count" class="stat-ok tabular-nums">0 active</span>
+            <span id="admins-inactive-count" class="stat-off tabular-nums">0 inactive</span>
+          </div>
+        </section>
+
+        <!-- ═══ VIEW: BRANCHES ═══ -->
+        <section id="view-branches" class="view-section hidden" aria-labelledby="title-branches">
+          <div class="view-header-bar mb-4">
+            <div class="min-w-0">
+              <h1 class="view-heading" id="title-branches">Branch Management</h1>
+              <p class="view-subheading">Create, update, and manage store branches and their assigned managers.</p>
+            </div>
+            <div class="page-actions">
+              <button type="button" id="btn-add-branch" data-testid="add-branch" class="btn btn-primary btn-lg">Add branch</button>
+            </div>
+          </div>
+
+          <div class="toolbar branch-toolbar" role="search">
+            <div class="toolbar-search branch-search">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-4.35-4.35M17 11a6 6 0 1 1-12 0 6 6 0 0 1 12 0Z"/></svg>
+              <label class="sr-only" for="branch-search">Search branches</label>
+              <input type="search" id="branch-search" class="field-input" placeholder="Search branches by code or name…" autocomplete="off">
+              <button type="button" id="branch-search-clear" aria-label="Clear branch search" title="Clear search">×</button>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <table class="data-table" id="branches-table">
+              <caption class="sr-only">Store branches</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Branch code</th>
+                  <th scope="col">Branch name</th>
+                  <th scope="col">Location</th>
+                  <th scope="col">Manager</th>
+                  <th scope="col">Created</th>
+                  <th scope="col"><span class="sr-only">Actions</span></th>
+                </tr>
+              </thead>
+              <tbody id="branches-tbody"></tbody>
+            </table>
+          </div>
+
+          <div class="summary-bar" aria-live="polite">
+            <span id="branches-total" class="tabular-nums">0 total</span>
+          </div>
+        </section>
+
+        <!-- ═══ VIEW: ROLES & PERMISSIONS ═══ -->
+        <section id="view-roles" class="view-section hidden" aria-labelledby="title-roles">
+          <div class="view-header-bar mb-4">
+            <div class="min-w-0">
+              <h1 class="view-heading" id="title-roles">Roles &amp; Permissions</h1>
+              <p class="view-subheading">Define what each role can access in the POS system. Changes apply immediately.</p>
+            </div>
+          </div>
+
+          <!-- Unified 5-Role Ledger Strip -->
+          <div class="roles-grid" id="roles-cards"></div>
+
+          <!-- Permission Matrix Table -->
+          <div class="table-container table-container--matrix">
+            <div class="matrix-head">
+              <div>
+                <h2 class="section-heading">Permission matrix</h2>
+                <p>Toggle permissions for each role. Changes are saved automatically.</p>
+              </div>
+            </div>
+            <table class="data-table matrix-table" id="permissions-table">
+              <caption class="sr-only">Permissions by role</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Permission</th>
+                  <th scope="col" class="text-center">Super Admin</th>
+                  <th scope="col" class="text-center">Admin</th>
+                  <th scope="col" class="text-center">Manager</th>
+                  <th scope="col" class="text-center">Barista</th>
+                  <th scope="col" class="text-center">Cashier</th>
+                </tr>
+              </thead>
+              <tbody id="permissions-tbody"></tbody>
+            </table>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       ADD / EDIT ACCOUNT MODAL
+       ============================================================ -->
+  <div id="account-modal" class="modal-backdrop">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="account-form-title">
+      <div class="modal-head">
+        <div>
+          <h2 class="modal-title" id="account-form-title">Add account</h2>
+          <p class="modal-subtitle">Configure staff identity, role assignment, and authentication credentials.</p>
+        </div>
+        <button type="button" class="modal-close-btn" data-testid="close-account-dialog" aria-label="Close dialog">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <input type="hidden" id="acct-edit-id">
+
+        <div class="form-grid">
+          <div class="field">
+            <label for="acct-first-name" class="field-label">First name</label>
+            <input type="text" id="acct-first-name" class="field-input" placeholder="e.g. Maria" autocomplete="off" required aria-describedby="acct-first-name-error">
+            <p id="acct-first-name-error" class="field-validation hidden" role="alert"></p>
+          </div>
+
+          <div class="field" id="acct-middle-name-field">
+            <label for="acct-middle-name" class="field-label">Middle name / initial (optional)</label>
+            <input type="text" id="acct-middle-name" class="field-input" placeholder="e.g. Clara or C" autocomplete="off" aria-describedby="acct-middle-name-error">
+            <p id="acct-middle-name-error" class="field-validation hidden" role="alert"></p>
+          </div>
+
+          <div class="field hidden" id="acct-middle-initial-field">
+            <label for="acct-middle-initial" class="field-label">Middle initial (optional)</label>
+            <input type="text" id="acct-middle-initial" class="field-input" maxlength="2" placeholder="e.g. C (optional)" autocomplete="off" aria-describedby="acct-middle-initial-error">
+            <p id="acct-middle-initial-error" class="field-validation hidden" role="alert"></p>
+          </div>
+
+          <div class="field field--full">
+            <label for="acct-last-name" class="field-label">Last name</label>
+            <input type="text" id="acct-last-name" class="field-input" placeholder="e.g. Santos" autocomplete="off" required aria-describedby="acct-last-name-error">
+            <p id="acct-last-name-error" class="field-validation hidden" role="alert"></p>
+          </div>
+
+          <div class="field">
+            <label for="acct-pin" class="field-label">4-digit PIN</label>
+            <input type="password" maxlength="4" inputmode="numeric" id="acct-pin" class="field-input input-pin tabular-nums" placeholder="----" autocomplete="off" aria-describedby="acct-pin-error">
+            <p id="acct-pin-error" class="field-validation hidden" role="alert"></p>
+          </div>
+
+          <div class="field">
+            <label for="acct-role" class="field-label">Role</label>
+            <select id="acct-role" class="field-input"></select>
+          </div>
+
+          <div class="field" id="acct-branch-field">
+            <label for="acct-branch-code" class="field-label">Branch Code</label>
+            <input type="text" id="acct-branch-code" class="field-input input-mono tabular-nums" inputmode="numeric" maxlength="7" placeholder="e.g. 1001805" autocomplete="off" aria-describedby="acct-branch-code-error">
+            <p id="acct-branch-code-error" class="field-validation hidden" role="alert"></p>
+          </div>
+
+          <div class="field">
+            <label for="acct-email" id="acct-email-label" class="field-label">Email</label>
+            <input type="email" id="acct-email" class="field-input" placeholder="maria@example.com" autocomplete="off" required>
+          </div>
+
+          <div class="field">
+            <label for="acct-phone" id="acct-phone-label" class="field-label">Phone number</label>
+            <input type="tel" id="acct-phone" class="field-input tabular-nums" placeholder="09171234567" autocomplete="off" maxlength="11" required aria-describedby="acct-phone-error">
+            <p id="acct-phone-error" class="field-validation hidden" role="alert"></p>
+          </div>
+
+          <div class="field">
+            <label for="acct-birthdate" id="acct-birthdate-label" class="field-label">Birthdate</label>
+            <input type="date" id="acct-birthdate" class="field-input tabular-nums" autocomplete="off" required>
+          </div>
+        </div>
+
+        <p id="managed-account-help" class="field-hint" hidden>Provision credentials in Supabase Auth and link the confirmed identity to this staff profile.</p>
+        <div class="field" id="acct-password-section">
+          <label for="acct-password" class="field-label">Set password</label>
+          <div class="password-field">
+            <input type="password" id="acct-password" class="field-input" aria-describedby="acct-password-error" autocomplete="new-password">
+            <button class="password-toggle" id="toggle-acct-password" type="button" aria-label="Show password" aria-pressed="false">
+              <svg class="password-icon password-icon--show" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M2.5 12s3.5-5 9.5-5 9.5 5 9.5 5-3.5 5-9.5 5-9.5-5-9.5-5Z"></path>
+                <circle cx="12" cy="12" r="2.5"></circle>
+              </svg>
+              <svg class="password-icon password-icon--hide" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="m3 3 18 18"></path>
+                <path d="M10.6 5.2A10.8 10.8 0 0 1 12 5c6 0 9.5 7 9.5 7a17.4 17.4 0 0 1-3.1 3.8M6.1 6.2C3.8 7.8 2.5 12 2.5 12S6 19 12 19c1 0 2-.2 2.9-.5"></path>
+                <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"></path>
+              </svg>
+            </button>
+          </div>
+          <p id="acct-password-error" class="field-validation hidden" role="status"></p>
+          <p class="field-hint">Used for Admin login authentication. Leave blank to keep the current password when editing.</p>
+        </div>
+      </div>
+
+      <div class="modal-foot">
+        <button type="button" class="btn btn-ghost btn-lg modal-close-btn" data-testid="cancel-account">Cancel</button>
+        <button type="button" id="btn-account-save" data-testid="save-account" class="btn btn-primary btn-lg">Save account</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       ADD / EDIT BRANCH MODAL
+       ============================================================ -->
+  <div id="branch-modal" class="modal-backdrop">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="branch-form-title">
+      <div class="modal-head">
+        <div>
+          <h2 class="modal-title" id="branch-form-title">Add branch</h2>
+          <p class="modal-subtitle">Register a store branch code, address, and designated branch manager.</p>
+        </div>
+        <button type="button" class="modal-close-btn" data-testid="close-branch-dialog" aria-label="Close dialog">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <input type="hidden" id="branch-edit-id">
+
+        <div class="form-grid">
+          <div class="field">
+            <label for="branch-code" class="field-label">Branch code</label>
+            <input type="text" id="branch-code" placeholder="e.g. 1001805" class="field-input input-mono tabular-nums" autocomplete="off" inputmode="numeric" maxlength="7" aria-describedby="branch-code-error">
+            <p id="branch-code-error" class="field-validation hidden" role="alert"></p>
+          </div>
+
+          <div class="field">
+            <label for="branch-name" class="field-label">Exact branch name</label>
+            <input type="text" id="branch-name" placeholder="e.g. Tagak Main" class="field-input" autocomplete="off">
+          </div>
+
+          <div class="field field--full">
+            <label for="branch-location" class="field-label">Location</label>
+            <input type="text" id="branch-location" placeholder="e.g. 123 A. Pichon St, Davao City" class="field-input" autocomplete="off">
+          </div>
+
+          <div class="field field--full">
+            <label for="branch-manager" class="field-label">Manager</label>
+            <select id="branch-manager" class="field-input"></select>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-foot">
+        <button type="button" class="btn btn-ghost btn-lg modal-close-btn" data-testid="cancel-branch">Cancel</button>
+        <button type="button" id="btn-branch-save" data-testid="save-branch" class="btn btn-primary btn-lg">Save branch</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       CONFIRM MODAL (delete)
+       ============================================================ -->
+  <div id="confirm-modal" class="modal-backdrop">
+    <div class="modal-card modal-card--sm" role="alertdialog" aria-modal="true" aria-labelledby="confirm-modal-title" aria-describedby="confirm-modal-msg">
+      <div class="modal-body">
+        <div class="confirm-head">
+          <div class="confirm-icon" aria-hidden="true">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+          </div>
+          <div>
+            <h2 class="modal-title" id="confirm-modal-title">Are you sure?</h2>
+            <p class="confirm-msg" id="confirm-modal-msg"></p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button type="button" class="btn btn-ghost modal-close-btn" data-testid="cancel-action">Cancel</button>
+        <button type="button" id="btn-confirm-action" data-testid="confirm-action" class="btn btn-void">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       TOAST CONTAINER (aligned with POS bottom-left rail offset)
+       ============================================================ -->
+  <div id="toast-container" class="fixed bottom-5 left-4 sm:left-24 z-[200] space-y-2" role="status" aria-live="polite"></div>
+
+  <!-- ============================================================
+       SCRIPTS
+       ============================================================ -->
+  <script src="../form-validation.js"></script>
+  <script src="../auth.js"></script>
+  <script src="js/permissions.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

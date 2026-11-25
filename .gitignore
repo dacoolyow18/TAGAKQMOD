@@ -1,0 +1,17 @@
+
+# Playwright
+/.update-recovery-cd300ad/
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
+
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+.audit-work/
+__pycache__/

@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Tagak CAFÉ — Order Your Brew</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="../qr-checkout.css">
+</head>
+<body>
+
+  <!-- ══════════ LANDING · BRANCH SELECTION ══════════ -->
+  <section id="screen-landing" class="screen active relative isolate">
+    <!-- Topo Lines — paste inside a section with class="relative isolate"
+         (isolate keeps the -z-10 layer inside the section so body backgrounds
+          can never paint over the effect) -->
+    <div
+      data-aifx="topo-lines"
+      class="absolute inset-0 -z-10 pointer-events-none"
+      aria-hidden="true"
+    ></div>
+    <div class="landing-inner landing-grid">
+      <div class="landing-copy">
+        <img class="brand-logo" src="../admin-app/assets/tagak-logo-admin-v2.png" alt="Tagak CAFÉ">
+        <p class="landing-eyebrow">Order ahead</p>
+        <h1 class="brand-title">Brewed to order.</h1>
+        <p class="brand-tagline">Enter your branch code to see today&apos;s menu. Pay at the counter and track your cup from your phone.</p>
+      </div>
+
+      <div class="branch-form branch-form-card">
+        <label class="branch-label" for="branch-input">Branch code</label>
+        <div class="branch-input-row">
+          <div class="input-wrap">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+              <circle cx="12" cy="10" r="3"/>
+            </svg>
+            <input id="branch-input" class="input-field" type="text" inputmode="numeric" maxlength="7" placeholder="e.g. 1001805" autocomplete="off" aria-describedby="branch-error">
+          </div>
+          <button id="btn-enter" class="btn btn-primary" type="button" disabled>Enter</button>
+        </div>
+        <p id="branch-error" class="branch-error hidden" role="alert">We could not find that branch. Check the code at your counter.</p>
+        <p class="form-hint">Find your branch code at the counter</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ WELCOME MODAL ══════════ -->
+  <div id="modal-welcome" class="overlay hidden" role="dialog" aria-modal="true" aria-label="Welcome">
+    <div class="modal-card welcome-card">
+      <span class="badge">Exclusive Access</span>
+      <h2 class="welcome-title">Welcome to Tagak CAFÉ</h2>
+      <p id="welcome-branch" class="welcome-branch">Main Branch</p>
+      <p class="welcome-body">Browse the menu and place your order.</p>
+       <button id="btn-continue" class="btn btn-primary btn-block">Continue</button>
+    </div>
+  </div>
+
+  <!-- ══════════ HOME ══════════ -->
+  <section id="screen-home" class="screen relative isolate">
+    <div
+      data-aifx="topo-lines"
+      class="absolute inset-0 -z-10 pointer-events-none"
+      aria-hidden="true"
+    ></div>
+    <header class="app-header home-header">
+       <div>
+        <p class="home-eyebrow">Good morning</p>
+        <h1 class="home-greeting">Welcome to <em>Tagak</em></h1>
+        <p class="home-branch" id="home-branch-name">Branch</p>
+      </div>
+      <img class="brand-logo brand-logo-sm" src="../admin-app/assets/tagak-logo-admin-v2.png" alt="Tagak CAFÉ">
+    </header>
+
+    <div class="home-body">
+      <div class="store-closed-banner hidden" role="status">
+        <strong>Store Closed</strong>
+        <span>We are not taking orders right now. Please come back when we reopen.</span>
+      </div>
+
+       <button id="home-order-status" class="order-card hidden">
+        <div class="order-card-line">
+          <span class="order-card-label">Live Order</span>
+          <span id="home-order-code" class="order-card-code">TK-0000</span>
+        </div>
+        <div class="order-card-line">
+          <span id="home-order-stage" class="order-card-stage">Brewing</span>
+          <span class="order-card-cta">Track order →</span>
+        </div>
+      </button>
+
+       <div id="home-hero" class="hero-carousel"></div>
+
+      <h2 class="section-title">Today's Picks</h2>
+       <div id="home-featured" class="featured-scroll"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ MENU ══════════ -->
+  <section id="screen-menu" class="screen relative isolate">
+    <div
+      data-aifx="topo-lines"
+      class="absolute inset-0 -z-10 pointer-events-none"
+      aria-hidden="true"
+    ></div>
+    <header class="app-header menu-header">
+      <button class="storefront-brand" type="button" aria-label="Scroll menu to top">
+        <img class="brand-logo brand-logo-sm" src="../admin-app/assets/tagak-logo-admin-v2.png" alt="Tagak CAFÉ">
+        <span>Tagak <em>CAFÉ</em></span>
+      </button>
+      <div class="storefront-context header-actions">
+        <p class="menu-branch" id="menu-branch-name">Branch</p>
+        <span class="header-divider" aria-hidden="true">·</span>
+        <span class="header-link">Menu</span>
+        <button id="header-cart" class="header-cart" type="button">Cart <span id="header-cart-badge" class="header-cart-badge hidden">0</span></button>
+      </div>
+    </header>
+
+    <div class="store-closed-banner hidden" role="status">
+      <strong>Store Closed</strong>
+      <span>We are not taking orders right now. Please come back when we reopen.</span>
+    </div>
+
+    <button id="menu-order-status" class="order-card hidden" type="button">
+      <div class="order-card-line">
+        <span class="order-card-label">Live Order</span>
+        <span id="menu-order-code" class="order-card-code">TK-0000</span>
+      </div>
+      <div class="order-card-line">
+        <span id="menu-order-stage" class="order-card-stage">Brewing</span>
+        <span class="order-card-cta">Track order →</span>
+      </div>
+    </button>
+
+    <div id="menu-hero" class="hero-carousel menu-hero"></div>
+
+    <section class="menu-intro" aria-labelledby="menu-heading">
+      <h2 id="menu-heading">Today&apos;s menu</h2>
+      <p>Prepared to order. Tap any item to customize it.</p>
+    </section>
+
+    <div id="category-tabs" class="tabs"></div>
+
+    <div id="menu-list" class="menu-list"></div>
+
+       <button id="basket-pill" class="basket-pill hidden">
+      <span id="basket-count" class="basket-count">0</span>
+      <span id="basket-total" class="basket-total">₱0.00</span>
+      <span class="basket-arrow">View basket →</span>
+    </button>
+  </section>
+
+  <!-- ══════════ CHECKOUT ══════════ -->
+  <section id="screen-checkout" class="screen relative isolate">
+    <div
+      data-aifx="topo-lines"
+      class="absolute inset-0 -z-10 pointer-events-none"
+      aria-hidden="true"
+    ></div>
+    <header class="app-header sub-header">
+      <button id="checkout-back" class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 19l-7-7 7-7"/></svg></button>
+      <div class="sub-header-text">
+        <h1 class="sub-title">Checkout Summary</h1>
+        <p class="sub-subtitle">Review &amp; Pay</p>
+      </div>
+      <span class="sub-spacer"></span>
+    </header>
+
+    <div class="checkout-body">
+      <div class="store-closed-banner hidden" role="status">
+        <strong>Store Closed</strong>
+        <span>We are not taking orders right now. Ordering is paused until we reopen.</span>
+      </div>
+
+      <div id="checkout-empty" class="empty-state hidden">
+        <p class="empty-title">Your cart is empty</p>
+        <p class="empty-sub">Add your favourite brews to get started.</p>
+        <button id="empty-browse" class="btn btn-secondary btn-block">Browse the Menu</button>
+      </div>
+
+      <div id="checkout-content">
+        <div class="checkout-column" id="checkout-left">
+          <h2 class="section-title">Your Items</h2>
+           <div id="checkout-items" class="checkout-card"></div>
+        </div>
+
+        <div class="checkout-column" id="checkout-right">
+          <h2 class="section-title">Cost Breakdown</h2>
+          <div class="checkout-card breakdown-card">
+            <div class="b-line"><span>Subtotal</span><span id="b-subtotal">₱0.00</span></div>
+            <div class="b-line"><span id="vat-label">VAT</span><span id="b-vat">₱0.00</span></div>
+            <div class="b-line b-total"><span>Total</span><span id="b-total">₱0.00</span></div>
+          </div>
+
+          <h2 class="section-title"><label for="order-nickname">Your Nickname</label></h2>
+          <div class="checkout-card nickname-card">
+            <input id="order-nickname" class="nickname-input" type="text" name="nickname"
+                   maxlength="30" autocomplete="nickname" autocapitalize="words" spellcheck="false" required
+                   placeholder="e.g. Sam" aria-describedby="order-nickname-help order-nickname-error">
+            <p id="order-nickname-help" class="nickname-help">The barista calls this name and checks it when you claim your order.</p>
+            <p id="order-nickname-error" class="branch-error hidden" role="alert"></p>
+          </div>
+
+          <h2 class="section-title">Order Type</h2>
+          <div class="pay-grid" id="order-mode-grid" role="radiogroup" aria-label="Order Type">
+            <button id="mode-dine-in" class="pay-card active" type="button" data-order-mode="dine-in" role="radio" aria-checked="true">
+              <svg class="pay-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3v7a4 4 0 004 4v7m0-18v7m4-7v7M17 3v18m0-18a4 4 0 014 4v4h-4"/></svg>
+              <span class="pay-label">Dine-In</span>
+              <span class="pay-note">Enjoy inside the café</span>
+              <span class="pay-dial"></span>
+            </button>
+            <button id="mode-takeout" class="pay-card inactive" type="button" data-order-mode="takeout" role="radio" aria-checked="false">
+              <svg class="pay-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+              <span class="pay-label">Take-Out</span>
+              <span class="pay-note">Packed to go</span>
+              <span class="pay-dial"></span>
+            </button>
+          </div>
+
+          <h2 class="section-title">Payment Method</h2>
+          <div class="pay-grid">
+             <button id="pay-qr" class="pay-card inactive" disabled>
+              <svg class="pay-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><path d="M3 14h7v7H3zM14 14h3v3h-3zM17 17h4v4h-4z"/></svg>
+              <span class="pay-label">QR payment unavailable</span>
+              <span class="pay-note">Scan &amp; pay at counter</span>
+              <span class="pay-dial"></span>
+            </button>
+             <button id="pay-cash" class="pay-card active">
+              <svg class="pay-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M6 12h.01M18 12h.01"/></svg>
+              <span class="pay-label">Cash counter</span>
+              <span class="pay-note">Pay at the till</span>
+              <span class="pay-dial"></span>
+            </button>
+          </div>
+
+           <button id="btn-place-order" class="btn btn-primary btn-block btn-lg">Place Order</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ LIVE ORDER TRACKER ══════════ -->
+  <section id="screen-tracker" class="screen">
+    <header class="app-header sub-header">
+      <button id="tracker-back" class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 19l-7-7 7-7"/></svg></button>
+      <div class="sub-header-text">
+        <h1 class="sub-title">Live Order Tracker</h1>
+        <p id="tracker-counter" class="sub-subtitle">Counter 1</p>
+      </div>
+      <span class="sub-spacer"></span>
+    </header>
+
+    <div class="tracker-body">
+      <div id="tracker-list" class="tracker-list"></div>
+
+      <div class="tracker-footer-note">
+        <p>Keep an eye on your order numbers. We'll brew each one fresh the moment it reaches the front of the queue.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ PAYMENT CONFIRMATION ══════════ -->
+  <div id="modal-confirm-payment" class="overlay hidden" role="dialog" aria-modal="true" aria-label="Confirm payment">
+    <div class="modal-card welcome-card">
+      <span class="badge">Confirm payment</span>
+      <h2 class="welcome-title">Pay with <span id="confirm-method">QR</span>?</h2>
+      <p class="welcome-body" id="confirm-body">Your order will be sent to the counter.</p>
+      <p class="confirm-nickname"><span>Name on order</span><span id="confirm-nickname"></span></p>
+      <p class="confirm-nickname"><span>Order type</span><span id="confirm-order-mode">Dine-In</span></p>
+      <p class="confirm-total"><span>Total</span><span id="confirm-total">₱0.00</span></p>
+      <button id="btn-confirm-pay" class="btn btn-primary btn-block btn-lg" type="button">Confirm and place order</button>
+      <button id="btn-confirm-cancel" class="btn btn-secondary btn-block" type="button">Go back</button>
+    </div>
+  </div>
+
+  <!-- ══════════ DIGITAL RECEIPT ══════════ -->
+  <dialog id="cash-dialog" class="cash-dialog" aria-labelledby="cash-title" aria-describedby="cash-message">
+    <h2 id="cash-title" class="welcome-title">Pay at the counter</h2>
+    <p class="confirm-nickname">Order number <strong id="cash-ticket"></strong></p>
+    <p id="cash-message" class="welcome-body"></p>
+    <p id="cash-time-row">Time remaining <strong id="cash-time" role="timer"></strong></p>
+    <button id="cash-dismiss" type="button" class="btn btn-primary" hidden>Continue</button>
+  </dialog>
+
+  <div id="modal-receipt" class="overlay hidden" role="dialog" aria-modal="true" aria-label="Order receipt">
+    <div class="modal-card receipt-card">
+      <div id="receipt-body"></div>
+      <button id="btn-receipt-close" class="btn btn-secondary btn-block" type="button">Close</button>
+    </div>
+  </div>
+
+  <!-- ══════════ ITEM CUSTOMIZATION BOTTOM SHEET ══════════ -->
+  <div id="sheet-backdrop" class="sheet-backdrop hidden"></div>
+  <section id="sheet-item" class="sheet hidden">
+    <div class="sheet-handle"></div>
+    <div id="item-image-wrap" class="sheet-image-wrap">
+      <button id="sheet-close" class="sheet-close" aria-label="Close item details"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      <span id="item-image-mono" class="sheet-image img-mono hidden" aria-hidden="true"></span>
+      <img id="item-image" class="sheet-image" alt="" src="">
+    </div>
+
+    <div class="sheet-content">
+      <div class="item-title-row">
+        <h2 id="item-name" class="item-name">Cafe Latte</h2>
+        <p id="item-price" class="item-price">₱130.00</p>
+      </div>
+      <p id="item-desc" class="item-desc">Espresso folded into silky steamed milk, latte art on top.</p>
+
+      <div class="opt-row">
+        <span class="opt-label">Quantity</span>
+        <div class="stepper">
+          <button id="qty-minus" class="stepper-btn neg">−</button>
+          <span id="qty-value" class="stepper-val">1</span>
+          <button id="qty-plus" class="stepper-btn pos">+</button>
+        </div>
+       </div>
+
+      <div id="size-option-row" class="opt-row opt-row-chips">
+        <span class="opt-label">Size</span>
+        <div class="chip-row">
+          <button id="size-regular" class="chip active">Regular</button>
+           <button id="size-large" class="chip">Large <span id="size-large-plus" class="chip-plus">+₱0.00</span></button>
+        </div>
+      </div>
+
+      <div id="temperature-option-row" class="opt-row opt-row-chips hidden">
+        <span class="opt-label">Temperature</span>
+        <div id="temperature-options" class="chip-row"></div>
+      </div>
+
+      <div id="addons-option-row" class="opt-row opt-row-block">
+        <span class="opt-label">Add-ons</span>
+        <div id="addons-container" class="chip-row"></div>
+      </div>
+
+      <div class="opt-row opt-row-block">
+        <span class="opt-label">Special Instructions</span>
+        <textarea id="item-instructions" class="instructions" rows="2" placeholder="e.g. Less sweet, extra hot foam..."></textarea>
+      </div>
+    </div>
+
+    <div class="sheet-footer">
+       <button id="btn-add-order" class="btn btn-primary btn-block btn-lg">Add to Order — <span id="btn-add-price">₱130.00</span></button>
+    </div>
+  </section>
+
+  <!-- Meridian engraving background -->
+  <video id="vanta-bg" autoplay muted loop playsinline preload="auto" aria-hidden="true" tabindex="-1" disablepictureinpicture>
+    <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260928_144832_2b6b23aa-4416-4fcb-9df4-132349c59edc.mp4" type="video/mp4">
+  </video>
+
+  <script src="../menu-initials.js"></script>
+  <script src="../form-validation.js"></script>
+  <script src="../order-sync.js"></script>
+  <script src="../qr-checkout.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

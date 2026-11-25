@@ -1,0 +1,10 @@
+.env
+.env.*
+!.env.example
+.vercel/
+node_modules/
+server/uploads/
+test-results/
+playwright-report/
+*.log
+/public/
