@@ -1,0 +1,134 @@
+{
+  "topic_1_stochastic_arrivals": {
+    "lambda_base_per_hr": 8.0,
+    "mean_exponential_interarrival_min": 7.5,
+    "peak_12pm_intensity_per_hr": 36.03,
+    "hourly_nhpp_intensity": {
+      "07:00": 8.0,
+      "08:00": 8.03,
+      "09:00": 12.213,
+      "10:00": 30.038,
+      "11:00": 17.575,
+      "12:00": 36.03,
+      "13:00": 13.389,
+      "14:00": 11.868,
+      "15:00": 28.0,
+      "16:00": 11.83,
+      "17:00": 8.027,
+      "18:00": 8.0,
+      "19:00": 8.0
+    },
+    "prep_time_models": {
+      "simple_iced_gamma_mean_min": 2.6,
+      "blended_drink_lognormal_mean_min": 3.449
+    }
+  },
+  "topic_2_mmck_queueing": {
+    "parameters": {
+      "lambda": 28.0,
+      "mu": 14.0,
+      "c": 2,
+      "K": 10
+    },
+    "utilization_rho": 1.0,
+    "P0_idle_prob": 0.047619,
+    "P_drop_abandonment_prob": 0.095238,
+    "effective_arrival_rate_per_hr": 25.3333,
+    "avg_orders_in_system_L": 5.2381,
+    "littles_law_turnaround_W_min": 12.406
+  },
+  "topic_3_dtmc_lifecycle": {
+    "transient_states": [
+      "S0: Cart/Held",
+      "S1: Queued",
+      "S2: Brewing",
+      "S3: Ready"
+    ],
+    "absorbing_states": [
+      "S4: Completed",
+      "S5: Canceled/Voided",
+      "S6: Refunded"
+    ],
+    "fundamental_matrix_N": [
+      [
+        1.0526,
+        1.0292,
+        0.9942,
+        0.879
+      ],
+      [
+        0.0,
+        1.1111,
+        1.0732,
+        0.949
+      ],
+      [
+        0.0,
+        0.0,
+        1.1364,
+        1.0048
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0526
+      ]
+    ],
+    "expected_active_steps_from_S1_queued": 3.1333,
+    "absorption_probabilities_B": [
+      [
+        0.8175,
+        0.1638,
+        0.0187
+      ],
+      [
+        0.8825,
+        0.0972,
+        0.0202
+      ],
+      [
+        0.9344,
+        0.0441,
+        0.0214
+      ],
+      [
+        0.9789,
+        0.0105,
+        0.0105
+      ]
+    ]
+  },
+  "topic_4_fair_monte_carlo": {
+    "iterations": 100000,
+    "ALE_base_PHP": 10723.86,
+    "ALE_mitigated_PHP": 2359.25,
+    "VaR_95_PHP": 21378.83,
+    "control_cost_PHP": 3500.0,
+    "ROSI": 1.3899,
+    "ROSI_percent": 138.99
+  },
+  "topic_5_game_theory_audit": {
+    "parameters": {
+      "G": 500.0,
+      "F": 2500.0,
+      "C_audit": 150.0,
+      "L": 500.0
+    },
+    "scipy_linprog_used": true,
+    "sigma_M_star_audit_prob": 0.1667,
+    "sigma_C_star_fraud_prob": 0.3,
+    "min_random_audit_threshold_percent": 16.67
+  },
+  "topic_6_pin_cryptanalysis": {
+    "search_space_S": 10000,
+    "shannon_entropy_bits": 13.2877,
+    "unthrottled_expected_compromise_min": 166.67,
+    "lockout_3_attempts_5_min_expected_compromise_days": 5.9
+  },
+  "topic_7_rbd_offline_resilience": {
+    "live_cloud_series_reliability_percent": 98.991,
+    "offline_fallback_parallel_reliability_percent": 99.985,
+    "inherent_availability_percent": 99.99
+  }
+}
